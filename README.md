@@ -1,1 +1,1 @@
-# stm32h743iit6-serial
+# stm32h723zgt6-peripherals
