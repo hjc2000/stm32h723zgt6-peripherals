@@ -3,4 +3,4 @@ target_import_src(${ProjectName})
 
 target_import_base(${ProjectName} PUBLIC)
 target_import_bsp_interface(${ProjectName} PUBLIC)
-target_import_stm32h723iit6_hal(${ProjectName} PRIVATE)
+target_import_stm32h723zgt6_hal(${ProjectName} PRIVATE)
