@@ -19,7 +19,7 @@ void base::cache::invalidate_d_cache()
 	SCB_InvalidateDCache();
 }
 
-void base::cache::invalidate_d_cache(void *address, size_t size)
+void base::cache::invalidate_d_cache(uint8_t *address, size_t size)
 {
 	SCB_InvalidateDCache_by_Addr(address, size);
 }
@@ -29,9 +29,9 @@ void base::cache::clean_d_cache()
 	SCB_CleanDCache();
 }
 
-void base::cache::clean_d_cache(void *address, size_t size)
+void base::cache::clean_d_cache(uint8_t const *address, size_t size)
 {
-	SCB_CleanDCache_by_Addr(reinterpret_cast<uint32_t *>(address), size);
+	SCB_CleanDCache_by_Addr(reinterpret_cast<uint32_t *>(const_cast<uint8_t *>(address)), size);
 }
 
 void base::cache::clean_and_invalidate_d_cache()
@@ -39,7 +39,7 @@ void base::cache::clean_and_invalidate_d_cache()
 	SCB_CleanInvalidateDCache();
 }
 
-void base::cache::clean_and_invalidate_d_cache(void *address, size_t size)
+void base::cache::clean_and_invalidate_d_cache(uint8_t *address, size_t size)
 {
 	SCB_CleanInvalidateDCache_by_Addr(reinterpret_cast<uint32_t *>(address), size);
 }
