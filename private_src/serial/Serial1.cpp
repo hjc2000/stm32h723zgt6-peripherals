@@ -1,4 +1,5 @@
 #include "Serial1.h"
+#include "base/embedded/cache/cache.h"
 #include "base/embedded/interrupt/interrupt.h"
 #include "base/embedded/serial/serial_handle.h"
 #include "base/IDisposable.h"
@@ -75,8 +76,9 @@ void bsp::Serial1::InitializeGpio()
 
 void bsp::Serial1::InitializeRxDma()
 {
-	_rx_dma_handle.Instance = DMA1_Stream1;
 	__HAL_RCC_DMA1_CLK_ENABLE();
+
+	_rx_dma_handle.Instance = DMA1_Stream1;
 	_rx_dma_handle.Init.Direction = DMA_PERIPH_TO_MEMORY;
 	_rx_dma_handle.Init.Request = DMA_REQUEST_USART1_RX;
 	_rx_dma_handle.Init.Mode = DMA_NORMAL;
@@ -97,8 +99,9 @@ void bsp::Serial1::InitializeRxDma()
 
 void bsp::Serial1::InitializeTxDma()
 {
-	_tx_dma_handle.Instance = DMA1_Stream0;
 	__HAL_RCC_DMA1_CLK_ENABLE();
+
+	_tx_dma_handle.Instance = DMA1_Stream0;
 	_tx_dma_handle.Init.Direction = DMA_MEMORY_TO_PERIPH;
 	_tx_dma_handle.Init.Request = DMA_REQUEST_USART1_TX;
 	_tx_dma_handle.Init.Mode = DMA_NORMAL;
@@ -364,6 +367,7 @@ int64_t bsp::Serial1::Read(base::Span const &span)
 		_receiving_completion_signal.Acquire();
 		if (HaveRead() > 0)
 		{
+			base::cache::invalidate_d_cache(span.Buffer(), HaveRead());
 			return HaveRead();
 		}
 	}
@@ -377,6 +381,8 @@ void bsp::Serial1::Write(base::ReadOnlySpan const &span)
 	}
 
 	base::task::MutexGuard l{_write_lock};
+
+	base::cache::clean_d_cache(span.Buffer(), span.Size());
 
 	HAL_StatusTypeDef ret = HAL_UART_Transmit_DMA(&_handle_context._uart_handle,
 												  span.Buffer(),
@@ -423,7 +429,11 @@ void bsp::Serial1::Close()
 	_sending_completion_signal.Release();
 
 	HAL_UART_DMAStop(&_handle_context._uart_handle);
+
 	base::interrupt::disable_interrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn));
 	base::interrupt::disable_interrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn));
 	base::interrupt::disable_interrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn));
+	_uart1_isr = nullptr;
+	_dma1_stream0_isr = nullptr;
+	_dma1_stream1_isr = nullptr;
 }
