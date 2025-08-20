@@ -1,5 +1,6 @@
 #include "AsynchronousSramController1.h" // IWYU pragma: keep
 #include "base/embedded/clock/ClockSource.h"
+#include "base/string/define.h"
 
 void bsp::AsynchronousSramController1::InitializeGpio()
 {
@@ -130,6 +131,6 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAM
 
 	if (HAL_SRAM_Init(&_sram_handle, &Timing, nullptr) != HAL_OK)
 	{
-		throw std::runtime_error{"初始化失败"};
+		throw std::runtime_error{CODE_POS_STR + "初始化失败"};
 	}
 }
