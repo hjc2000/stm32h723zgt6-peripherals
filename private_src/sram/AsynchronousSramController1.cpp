@@ -128,7 +128,7 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAM
 	Timing.AccessMode = FMC_ACCESS_MODE_A;
 	/* ExtTiming */
 
-	if (HAL_SRAM_Init(&_sram_handle, &Timing, NULL) != HAL_OK)
+	if (HAL_SRAM_Init(&_sram_handle, &Timing, nullptr) != HAL_OK)
 	{
 		throw std::runtime_error{"初始化失败"};
 	}
