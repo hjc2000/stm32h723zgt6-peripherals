@@ -16,3 +16,8 @@ base::asynchronous_sram::asynchronous_sram_timing base::asynchronous_sram::timin
 {
 	return self.Timing();
 }
+
+base::Span base::asynchronous_sram::span(base::asynchronous_sram::asynchronous_sram_controller_handle &self)
+{
+	return self.Span();
+}

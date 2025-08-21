@@ -26,6 +26,16 @@ namespace bsp
 		{
 			return _timing;
 		}
+
+		virtual base::Span Span() override
+		{
+			base::Span ret{
+				reinterpret_cast<uint8_t *>(0x60000000),
+				static_cast<int64_t>(0x70000000 - 0x60000000),
+			};
+
+			return ret;
+		}
 	};
 
 } // namespace bsp

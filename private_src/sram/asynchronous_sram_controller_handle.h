@@ -9,4 +9,6 @@ public:
 	virtual void Initialize(base::asynchronous_sram::ISRAMTimingProvider const &timing_provider) = 0;
 
 	virtual base::asynchronous_sram::asynchronous_sram_timing Timing() const = 0;
+
+	virtual base::Span Span() = 0;
 };
