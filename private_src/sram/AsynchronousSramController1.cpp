@@ -4,6 +4,8 @@
 
 void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAMTimingProvider const &timing_provider)
 {
+	__HAL_RCC_FMC_CLK_ENABLE();
+
 	/** Perform the SRAM1 memory initialization sequence
 	 */
 	_sram_handle.Instance = FMC_NORSRAM_DEVICE;
