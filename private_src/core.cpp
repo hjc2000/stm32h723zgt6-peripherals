@@ -25,7 +25,7 @@ void base::core::initialize()
 
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
 	HAL_EnableCompensationCell();
-	base::cache::enable();
+	// base::cache::enable();
 	_initialized = true;
 }
 
