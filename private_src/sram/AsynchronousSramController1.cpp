@@ -16,13 +16,13 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAM
 	_sram_handle.Init.BurstAccessMode = FMC_BURST_ACCESS_MODE_DISABLE;
 	_sram_handle.Init.WaitSignalPolarity = FMC_WAIT_SIGNAL_POLARITY_LOW;
 	_sram_handle.Init.WaitSignalActive = FMC_WAIT_TIMING_BEFORE_WS;
-	_sram_handle.Init.WriteOperation = FMC_WRITE_OPERATION_DISABLE;
+	_sram_handle.Init.WriteOperation = FMC_WRITE_OPERATION_ENABLE;
 	_sram_handle.Init.WaitSignal = FMC_WAIT_SIGNAL_DISABLE;
 	_sram_handle.Init.ExtendedMode = FMC_EXTENDED_MODE_DISABLE;
 	_sram_handle.Init.AsynchronousWait = FMC_ASYNCHRONOUS_WAIT_ENABLE;
 	_sram_handle.Init.WriteBurst = FMC_WRITE_BURST_DISABLE;
 	_sram_handle.Init.ContinuousClock = FMC_CONTINUOUS_CLOCK_SYNC_ONLY;
-	_sram_handle.Init.WriteFifo = FMC_WRITE_FIFO_ENABLE;
+	_sram_handle.Init.WriteFifo = FMC_WRITE_FIFO_DISABLE;
 	_sram_handle.Init.PageSize = FMC_PAGE_SIZE_NONE;
 
 	base::clock::ClockSource hclk{"hclk"};
