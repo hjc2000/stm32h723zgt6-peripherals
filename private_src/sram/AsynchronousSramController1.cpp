@@ -1,6 +1,7 @@
 #include "AsynchronousSramController1.h" // IWYU pragma: keep
 #include "base/embedded/clock/ClockSource.h"
 #include "base/string/define.h"
+#include <stdexcept>
 
 void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAMTimingProvider const &timing_provider)
 {
@@ -48,4 +49,11 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAM
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败"};
 	}
+}
+
+void bsp::AsynchronousSramController1::Initialize(std::string const &clock_source_name,
+												  uint32_t divider,
+												  base::asynchronous_sram::ISRAMTimingProvider const &timing_provider)
+{
+	throw std::runtime_error{CODE_POS_STR + "暂不支持。"};
 }

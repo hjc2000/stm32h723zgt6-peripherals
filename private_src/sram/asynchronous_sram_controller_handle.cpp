@@ -12,6 +12,14 @@ void base::asynchronous_sram::initialize(base::asynchronous_sram::asynchronous_s
 	self.Initialize(timing_provider);
 }
 
+void base::asynchronous_sram::initialize(base::asynchronous_sram::asynchronous_sram_controller_handle &self,
+										 std::string const &clock_source_name,
+										 uint32_t divider,
+										 base::asynchronous_sram::ISRAMTimingProvider const &timing_provider)
+{
+	self.Initialize(clock_source_name, divider, timing_provider);
+}
+
 base::asynchronous_sram::asynchronous_sram_timing base::asynchronous_sram::timing(base::asynchronous_sram::asynchronous_sram_controller_handle &self)
 {
 	return self.Timing();
