@@ -1,11 +1,12 @@
 #include "PllClockSource.h"
 #include "base/embedded/clock/ClockSource.h"
+#include "base/string/define.h"
 
 base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel_name) const
 {
-	if (!_opened)
+	if (!_configured)
 	{
-		throw std::runtime_error{"pll 还未打开，无法查看频率"};
+		throw std::runtime_error{"pll 还未配置，无法查看频率"};
 	}
 
 	if (output_channel_name == "p")
@@ -22,7 +23,7 @@ base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel
 	}
 	else
 	{
-		throw std::invalid_argument{"没有该输出通道"};
+		throw std::invalid_argument{CODE_POS_STR + "没有该输出通道"};
 	}
 }
 
@@ -95,7 +96,7 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	}
 	else
 	{
-		throw std::invalid_argument{"不支持该输入通道"};
+		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
 	}
 
 	/* #endregion */
@@ -108,15 +109,15 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	}
 	else if (input_channel_name == "hsi")
 	{
-		throw std::invalid_argument{"不支持该输入通道"};
+		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
 	}
 	else if (input_channel_name == "csi")
 	{
-		throw std::invalid_argument{"不支持该输入通道"};
+		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
 	}
 	else
 	{
-		throw std::invalid_argument{"不支持该输入通道"};
+		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
 	}
 
 	/* #region pll_range */
@@ -160,7 +161,7 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	HAL_StatusTypeDef result = HAL_RCC_OscConfig(&def);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
-		throw std::runtime_error{"打开 PLL 失败。"};
+		throw std::runtime_error{CODE_POS_STR + "打开 PLL 失败。"};
 	}
 
 	// 打开后，记录各个输出通道的频率
@@ -168,5 +169,5 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	_q_freq = input_freq / m * n / q;
 	_r_freq = input_freq / m * n / r;
 
-	_opened = true;
+	_configured = true;
 }

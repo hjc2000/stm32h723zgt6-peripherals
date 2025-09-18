@@ -9,7 +9,7 @@ namespace bsp
 		public base::clock::clock_source_handle
 	{
 	private:
-		inline static bool _opened = false;
+		inline static bool _configured = false;
 		inline static base::unit::MHz _p_freq;
 		inline static base::unit::MHz _q_freq;
 		inline static base::unit::MHz _r_freq;
@@ -31,7 +31,7 @@ namespace bsp
 				throw std::runtime_error{"关闭 PLL 失败。"};
 			}
 
-			_opened = false;
+			_configured = false;
 		}
 	};
 } // namespace bsp
