@@ -7,7 +7,7 @@ void bsp::config_fmc_clock_source(std::string const &clock_source_name)
 {
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{};
 
-	if (clock_source_name == "hclk")
+	if (clock_source_name == "hclk3")
 	{
 		PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_FMC;
 		PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_D1HCLK;
