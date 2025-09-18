@@ -32,10 +32,14 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::ISRAM
 
 	/* Timing */
 	FMC_NORSRAM_TimingTypeDef Timing{};
-	Timing.AddressSetupTime = _timing.address_setup_clock_cycle_count();
-	Timing.AddressHoldTime = _timing.address_hold_clock_cycle_count();
-	Timing.DataSetupTime = _timing.data_setup_clock_cycle_count();
-	Timing.BusTurnAroundDuration = _timing.bus_turn_around_clock_cycle_count();
+	// Timing.AddressSetupTime = _timing.address_setup_clock_cycle_count();
+	// Timing.AddressHoldTime = _timing.address_hold_clock_cycle_count();
+	// Timing.DataSetupTime = _timing.data_setup_clock_cycle_count();
+	// Timing.BusTurnAroundDuration = _timing.bus_turn_around_clock_cycle_count();
+	Timing.AddressSetupTime = 15;
+	Timing.AddressHoldTime = 15;
+	Timing.DataSetupTime = 15;
+	Timing.BusTurnAroundDuration = 15;
 	Timing.AccessMode = FMC_ACCESS_MODE_A;
 	/* ExtTiming */
 
