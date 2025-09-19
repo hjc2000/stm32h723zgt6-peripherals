@@ -16,12 +16,9 @@ extern "C"
 {
 	void DMA1_Stream2_IRQHandler()
 	{
-		try
+		if (_dma1_stream2_isr != nullptr)
 		{
 			_dma1_stream2_isr();
-		}
-		catch (...)
-		{
 		}
 	}
 }
