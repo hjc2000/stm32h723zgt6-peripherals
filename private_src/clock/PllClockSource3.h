@@ -1,13 +1,13 @@
 #pragma once
 #include "base/unit/MHz.h"
 #include "clock_source_handle.h"
-#include "hal.h"
+#include "hal.h" // IWYU pragma: keep
 #include <cstdint>
 #include <string>
 
 namespace bsp
 {
-	class PllClockSource final :
+	class PllClockSource3 final :
 		public base::clock::clock_source_handle
 	{
 	private:
@@ -25,13 +25,9 @@ namespace bsp
 		inline static base::unit::MHz _q_freq;
 		inline static base::unit::MHz _r_freq;
 
-		std::string _clock_source_name;
-
-		static uint32_t input_channel_name_to_define_value(std::string const &input_channel_name);
-
 		static Factors get_factors(std::map<std::string, uint32_t> const &channel_factor_map);
 
-		static base::unit::MHz get_input_frequency(std::string const &input_channel_name);
+		static base::unit::MHz get_input_frequency();
 
 		///
 		/// @brief
@@ -44,31 +40,10 @@ namespace bsp
 	public:
 		virtual base::unit::MHz Frequency(std::string const &output_channel_name) const override;
 
-		virtual void Configure(std::string const &input_channel_name,
-							   std::map<std::string, uint32_t> const &channel_factor_map) override;
+		virtual void Configure(std::map<std::string, uint32_t> const &channel_factor_map) override;
 
 		virtual void TurnOff() override
 		{
-			RCC_OscInitTypeDef def{};
-			def.OscillatorType = RCC_OSCILLATORTYPE_NONE;
-			def.PLL.PLLState = RCC_PLL_OFF;
-			HAL_StatusTypeDef result = HAL_RCC_OscConfig(&def);
-			if (result != HAL_StatusTypeDef::HAL_OK)
-			{
-				throw std::runtime_error{"关闭 PLL 失败。"};
-			}
-
-			_configured = false;
-		}
-
-		///
-		/// @brief 获取 PLL 的时钟源的名称。
-		///
-		/// @return
-		///
-		std::string ClockSourceName() const
-		{
-			return _clock_source_name;
 		}
 	};
 

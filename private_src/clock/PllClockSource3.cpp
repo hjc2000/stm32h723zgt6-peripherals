@@ -1,31 +1,13 @@
-#include "PllClockSource.h" // IWYU pragma: keep
+#include "PllClockSource3.h" // IWYU pragma: keep
 #include "base/embedded/clock/ClockSource.h"
 #include "base/string/define.h"
+#include "PllClockSource.h"
 #include <cstdint>
+#include <string>
 
 /* #region 静态的配置帮助函数 */
 
-uint32_t bsp::PllClockSource::input_channel_name_to_define_value(std::string const &input_channel_name)
-{
-	if (input_channel_name == "hse")
-	{
-		return RCC_PLLSOURCE_HSE;
-	}
-	else if (input_channel_name == "hsi")
-	{
-		return RCC_PLLSOURCE_HSI;
-	}
-	else if (input_channel_name == "csi")
-	{
-		return RCC_PLLSOURCE_CSI;
-	}
-	else
-	{
-		throw std::invalid_argument{CODE_POS_STR + "非法输入通道名。"};
-	}
-}
-
-bsp::PllClockSource::Factors bsp::PllClockSource::get_factors(std::map<std::string, uint32_t> const &channel_factor_map)
+bsp::PllClockSource3::Factors bsp::PllClockSource3::get_factors(std::map<std::string, uint32_t> const &channel_factor_map)
 {
 	Factors ret{};
 
@@ -82,8 +64,11 @@ bsp::PllClockSource::Factors bsp::PllClockSource::get_factors(std::map<std::stri
 	return ret;
 }
 
-base::unit::MHz bsp::PllClockSource::get_input_frequency(std::string const &input_channel_name)
+base::unit::MHz bsp::PllClockSource3::get_input_frequency()
 {
+	bsp::PllClockSource pll{};
+	std::string input_channel_name = pll.ClockSourceName();
+
 	if (input_channel_name == "hse")
 	{
 		base::clock::ClockSource clock_source{"hse"};
@@ -108,29 +93,29 @@ base::unit::MHz bsp::PllClockSource::get_input_frequency(std::string const &inpu
 	throw std::invalid_argument{CODE_POS_STR + "非法输入通道名。"};
 }
 
-uint32_t bsp::PllClockSource::calculate_pll_range(base::unit::MHz const &m_channel_output_frequency)
+uint32_t bsp::PllClockSource3::calculate_pll_range(base::unit::MHz const &m_channel_output_frequency)
 {
 	if (m_channel_output_frequency < base::unit::MHz{2})
 	{
-		return RCC_PLL1VCIRANGE_0;
+		return RCC_PLL3VCIRANGE_0;
 	}
 
 	if (m_channel_output_frequency >= base::unit::MHz{2} && m_channel_output_frequency < base::unit::MHz{4})
 	{
-		return RCC_PLL1VCIRANGE_1;
+		return RCC_PLL3VCIRANGE_1;
 	}
 
 	if (m_channel_output_frequency >= base::unit::MHz{4} && m_channel_output_frequency < base::unit::MHz{8})
 	{
-		return RCC_PLL1VCIRANGE_2;
+		return RCC_PLL3VCIRANGE_2;
 	}
 
-	return RCC_PLL1VCIRANGE_3;
+	return RCC_PLL3VCIRANGE_3;
 }
 
 /* #endregion */
 
-base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel_name) const
+base::unit::MHz bsp::PllClockSource3::Frequency(std::string const &output_channel_name) const
 {
 	if (!_configured)
 	{
@@ -155,27 +140,23 @@ base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel
 	throw std::invalid_argument{CODE_POS_STR + "非法输出通道。"};
 }
 
-void bsp::PllClockSource::Configure(std::string const &input_channel_name,
-									std::map<std::string, uint32_t> const &channel_factor_map)
+void bsp::PllClockSource3::Configure(std::map<std::string, uint32_t> const &channel_factor_map)
 {
-	_clock_source_name = input_channel_name;
 	Factors factors = get_factors(channel_factor_map);
-	base::unit::MHz input_frequency = get_input_frequency(input_channel_name);
+	base::unit::MHz input_frequency = get_input_frequency();
 	uint32_t pll_range = calculate_pll_range(input_frequency / factors._m);
 
-	RCC_OscInitTypeDef def{};
-	def.OscillatorType = RCC_OSCILLATORTYPE_NONE;
-	def.PLL.PLLState = RCC_PLL_ON;
-	def.PLL.PLLSource = input_channel_name_to_define_value(input_channel_name);
-	def.PLL.PLLRGE = pll_range;
-	def.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-	def.PLL.PLLM = factors._m;
-	def.PLL.PLLN = factors._n;
-	def.PLL.PLLP = factors._p;
-	def.PLL.PLLQ = factors._q;
-	def.PLL.PLLR = factors._r;
+	RCC_PeriphCLKInitTypeDef def{};
+	def.PeriphClockSelection = RCC_PERIPHCLK_PLL3_DIVP | RCC_PERIPHCLK_PLL3_DIVQ | RCC_PERIPHCLK_PLL3_DIVR;
+	def.PLL3.PLL3M = factors._m;
+	def.PLL3.PLL3N = factors._n;
+	def.PLL3.PLL3P = factors._p;
+	def.PLL3.PLL3Q = factors._q;
+	def.PLL3.PLL3R = factors._r;
+	def.PLL3.PLL3RGE = pll_range;
+	def.PLL3.PLL3FRACN = 0;
 
-	HAL_StatusTypeDef result = HAL_RCC_OscConfig(&def);
+	HAL_StatusTypeDef result = HAL_RCCEx_PeriphCLKConfig(&def);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "配置 PLL 失败。"};
