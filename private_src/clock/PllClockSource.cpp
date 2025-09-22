@@ -1,12 +1,89 @@
-#include "PllClockSource.h"
+#include "PllClockSource.h" // IWYU pragma: keep
 #include "base/embedded/clock/ClockSource.h"
 #include "base/string/define.h"
 
+uint32_t bsp::PllClockSource::input_channel_name_to_define_value(std::string const &input_channel_name)
+{
+	if (input_channel_name == "hse")
+	{
+		return RCC_PLLSOURCE_HSE;
+	}
+	else if (input_channel_name == "hsi")
+	{
+		return RCC_PLLSOURCE_HSI;
+	}
+	else if (input_channel_name == "csi")
+	{
+		return RCC_PLLSOURCE_CSI;
+	}
+	else
+	{
+		throw std::invalid_argument{CODE_POS_STR + "非法输入通道名。"};
+	}
+}
+
+bsp::PllClockSource::Factors bsp::PllClockSource::get_factors(std::map<std::string, uint32_t> const &channel_factor_map)
+{
+	Factors ret{};
+
+	{
+		auto it = channel_factor_map.find("m");
+		if (it == channel_factor_map.end())
+		{
+			throw std::invalid_argument{CODE_POS_STR + "缺少 m 因子。"};
+		}
+
+		ret._m = it->second;
+	}
+
+	{
+		auto it = channel_factor_map.find("n");
+		if (it == channel_factor_map.end())
+		{
+			throw std::invalid_argument{CODE_POS_STR + "缺少 n 因子。"};
+		}
+
+		ret._n = it->second;
+	}
+
+	{
+		auto it = channel_factor_map.find("p");
+		if (it == channel_factor_map.end())
+		{
+			throw std::invalid_argument{CODE_POS_STR + "缺少 p 因子。"};
+		}
+
+		ret._p = it->second;
+	}
+
+	{
+		auto it = channel_factor_map.find("q");
+		if (it == channel_factor_map.end())
+		{
+			throw std::invalid_argument{CODE_POS_STR + "缺少 q 因子。"};
+		}
+
+		ret._q = it->second;
+	}
+
+	{
+		auto it = channel_factor_map.find("r");
+		if (it == channel_factor_map.end())
+		{
+			throw std::invalid_argument{CODE_POS_STR + "缺少 r 因子。"};
+		}
+
+		ret._r = it->second;
+	}
+
+	return ret;
+}
+
 base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel_name) const
 {
-	if (!_configured)
+	if (!_opened)
 	{
-		throw std::runtime_error{"pll 还未配置，无法查看频率"};
+		throw std::runtime_error{"pll 还未打开，无法查看频率"};
 	}
 
 	if (output_channel_name == "p")
@@ -23,83 +100,14 @@ base::unit::MHz bsp::PllClockSource::Frequency(std::string const &output_channel
 	}
 	else
 	{
-		throw std::invalid_argument{CODE_POS_STR + "没有该输出通道"};
+		throw std::invalid_argument{"没有该输出通道"};
 	}
 }
 
 void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 									std::map<std::string, uint32_t> const &channel_factor_map)
 {
-	/* #region m,n,p,q,r */
-
-	int m = 1;
-	{
-		auto it = channel_factor_map.find("m");
-		if (it != channel_factor_map.end())
-		{
-			m = it->second;
-		}
-	}
-
-	int n = 1;
-	{
-		auto it = channel_factor_map.find("n");
-		if (it != channel_factor_map.end())
-		{
-			n = it->second;
-		}
-	}
-
-	int p = 1;
-	{
-		auto it = channel_factor_map.find("p");
-		if (it != channel_factor_map.end())
-		{
-			p = it->second;
-		}
-	}
-
-	int q = 1;
-	{
-		auto it = channel_factor_map.find("q");
-		if (it != channel_factor_map.end())
-		{
-			q = it->second;
-		}
-	}
-
-	int r = 1;
-	{
-		auto it = channel_factor_map.find("r");
-		if (it != channel_factor_map.end())
-		{
-			r = it->second;
-		}
-	}
-
-	/* #endregion */
-
-	/* #region pll_source */
-
-	uint32_t pll_source = RCC_PLLSOURCE_HSE;
-	if (input_channel_name == "hse")
-	{
-		pll_source = RCC_PLLSOURCE_HSE;
-	}
-	else if (input_channel_name == "hsi")
-	{
-		pll_source = RCC_PLLSOURCE_HSI;
-	}
-	else if (input_channel_name == "csi")
-	{
-		pll_source = RCC_PLLSOURCE_CSI;
-	}
-	else
-	{
-		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
-	}
-
-	/* #endregion */
+	Factors factors = get_factors(channel_factor_map);
 
 	base::unit::MHz input_freq;
 	if (input_channel_name == "hse")
@@ -109,15 +117,15 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	}
 	else if (input_channel_name == "hsi")
 	{
-		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
+		throw std::invalid_argument{"不支持该输入通道"};
 	}
 	else if (input_channel_name == "csi")
 	{
-		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
+		throw std::invalid_argument{"不支持该输入通道"};
 	}
 	else
 	{
-		throw std::invalid_argument{CODE_POS_STR + "不支持该输入通道"};
+		throw std::invalid_argument{"不支持该输入通道"};
 	}
 
 	/* #region pll_range */
@@ -125,7 +133,7 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	int pll_range = RCC_PLL1VCIRANGE_2;
 	{
 		// 经过 m 分频系数分频后输入锁相环，这里需要根据输入锁相环的频率所处的范围来设置参数。
-		base::unit::MHz divided_input_freq = input_freq / m;
+		base::unit::MHz divided_input_freq = input_freq / factors._m;
 		if (divided_input_freq < base::unit::MHz{2})
 		{
 			pll_range = RCC_PLL1VCIRANGE_0;
@@ -149,25 +157,25 @@ void bsp::PllClockSource::Configure(std::string const &input_channel_name,
 	RCC_OscInitTypeDef def{};
 	def.OscillatorType = RCC_OSCILLATORTYPE_NONE;
 	def.PLL.PLLState = RCC_PLL_ON;
-	def.PLL.PLLSource = pll_source;
+	def.PLL.PLLSource = input_channel_name_to_define_value(input_channel_name);
 	def.PLL.PLLRGE = pll_range;
 	def.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-	def.PLL.PLLM = m;
-	def.PLL.PLLN = n;
-	def.PLL.PLLP = p;
-	def.PLL.PLLQ = q;
-	def.PLL.PLLR = r;
+	def.PLL.PLLM = factors._m;
+	def.PLL.PLLN = factors._n;
+	def.PLL.PLLP = factors._p;
+	def.PLL.PLLQ = factors._q;
+	def.PLL.PLLR = factors._r;
 
 	HAL_StatusTypeDef result = HAL_RCC_OscConfig(&def);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
-		throw std::runtime_error{CODE_POS_STR + "打开 PLL 失败。"};
+		throw std::runtime_error{CODE_POS_STR + "配置 PLL 失败。"};
 	}
 
 	// 打开后，记录各个输出通道的频率
-	_p_freq = input_freq / m * n / p;
-	_q_freq = input_freq / m * n / q;
-	_r_freq = input_freq / m * n / r;
+	_p_freq = input_freq / factors._m * factors._n / factors._p;
+	_q_freq = input_freq / factors._m * factors._n / factors._q;
+	_r_freq = input_freq / factors._m * factors._n / factors._r;
 
-	_configured = true;
+	_opened = true;
 }

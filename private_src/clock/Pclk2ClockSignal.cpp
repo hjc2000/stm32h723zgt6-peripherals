@@ -1,8 +1,8 @@
-#include "Pclk1ClockSignal.h" // IWYU pragma: keep
+#include "Pclk2ClockSignal.h" // IWYU pragma: keep
 #include "base/string/define.h"
 #include <stdexcept>
 
-void bsp::Pclk1ClockSignal::Configure(std::map<std::string, uint32_t> const &channel_factor_map)
+void bsp::Pclk2ClockSignal::Configure(std::map<std::string, uint32_t> const &channel_factor_map)
 {
 	auto it = channel_factor_map.find("in");
 	if (it == channel_factor_map.end())
@@ -11,37 +11,37 @@ void bsp::Pclk1ClockSignal::Configure(std::map<std::string, uint32_t> const &cha
 	}
 
 	RCC_ClkInitTypeDef def{};
-	def.ClockType = RCC_CLOCKTYPE_PCLK1;
+	def.ClockType = RCC_CLOCKTYPE_PCLK2;
 
 	switch (it->second)
 	{
 	case 1:
 		{
-			def.APB1CLKDivider = RCC_APB1_DIV1;
+			def.APB2CLKDivider = RCC_APB2_DIV1;
 			_input_divider = 1;
 			break;
 		}
 	case 2:
 		{
-			def.APB1CLKDivider = RCC_APB1_DIV2;
+			def.APB2CLKDivider = RCC_APB2_DIV2;
 			_input_divider = 2;
 			break;
 		}
 	case 4:
 		{
-			def.APB1CLKDivider = RCC_APB1_DIV4;
+			def.APB2CLKDivider = RCC_APB2_DIV4;
 			_input_divider = 4;
 			break;
 		}
 	case 8:
 		{
-			def.APB1CLKDivider = RCC_APB1_DIV8;
+			def.APB2CLKDivider = RCC_APB2_DIV8;
 			_input_divider = 8;
 			break;
 		}
 	case 16:
 		{
-			def.APB1CLKDivider = RCC_APB1_DIV16;
+			def.APB2CLKDivider = RCC_APB2_DIV16;
 			_input_divider = 16;
 			break;
 		}

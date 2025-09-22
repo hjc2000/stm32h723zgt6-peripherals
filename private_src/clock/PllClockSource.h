@@ -2,17 +2,32 @@
 #include "base/unit/MHz.h"
 #include "clock_source_handle.h"
 #include "hal.h"
+#include <cstdint>
+#include <string>
 
 namespace bsp
 {
-	class PllClockSource :
+	class PllClockSource final :
 		public base::clock::clock_source_handle
 	{
 	private:
-		inline static bool _configured = false;
+		struct Factors
+		{
+			uint32_t _m{};
+			uint32_t _n{};
+			uint32_t _p{};
+			uint32_t _q{};
+			uint32_t _r{};
+		};
+
+		inline static bool _opened = false;
 		inline static base::unit::MHz _p_freq;
 		inline static base::unit::MHz _q_freq;
 		inline static base::unit::MHz _r_freq;
+
+		static uint32_t input_channel_name_to_define_value(std::string const &input_channel_name);
+
+		static Factors get_factors(std::map<std::string, uint32_t> const &channel_factor_map);
 
 	public:
 		virtual base::unit::MHz Frequency(std::string const &output_channel_name) const override;
@@ -31,7 +46,8 @@ namespace bsp
 				throw std::runtime_error{"关闭 PLL 失败。"};
 			}
 
-			_configured = false;
+			_opened = false;
 		}
 	};
+
 } // namespace bsp

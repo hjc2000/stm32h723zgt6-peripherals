@@ -3,6 +3,7 @@
 #include "base/unit/Hz.h"
 #include "clock_source_handle.h"
 #include "hal.h"
+#include <cstdint>
 #include <stdexcept>
 
 namespace bsp
@@ -10,72 +11,37 @@ namespace bsp
 	class Pclk2ClockSignal :
 		public base::clock::clock_source_handle
 	{
-	public:
-		/* #region Frequency */
+	private:
+		uint32_t _input_divider = 4;
+		inline static bool _configured = false;
 
+	public:
 		virtual base::unit::MHz Frequency() const override
 		{
 			uint32_t value = HAL_RCC_GetPCLK2Freq();
 			return base::unit::MHz{base::unit::Hz{value}};
 		}
 
-		/* #endregion */
+		virtual void Configure(std::map<std::string, uint32_t> const &channel_factor_map) override;
 
-		/* #region Configure */
-
-		virtual void Configure(std::map<std::string, uint32_t> const &channel_factor_map) override
+		///
+		/// @brief 获取 PCLK2 的输入分频系数。
+		///
+		/// @note 这个有什么用呢？为什么要获取分频系数？
+		/// 因为在 APB2 总线上的定时器的输入端有个倍频器，只要 PCLK2 的输入分频器的分频系数不是 1,
+		/// 这个倍频器就会把输入定时器模块的 PCLK2 倍频。
+		///
+		/// @return
+		///
+		uint32_t InputDivider() const
 		{
-			auto it = channel_factor_map.find("in");
-			if (it == channel_factor_map.end())
+			if (!_configured)
 			{
-				throw std::invalid_argument{CODE_POS_STR + "channel_factor_map 中没有 in 通道。"};
+				throw std::runtime_error{CODE_POS_STR + "没有用本类配置过 PCLK2, 无法使用本属性。"};
 			}
 
-			RCC_ClkInitTypeDef def{};
-			def.ClockType = RCC_CLOCKTYPE_PCLK2;
-
-			switch (it->second)
-			{
-			case 1:
-				{
-					def.APB2CLKDivider = RCC_APB2_DIV1;
-					break;
-				}
-			case 2:
-				{
-					def.APB2CLKDivider = RCC_APB2_DIV2;
-					break;
-				}
-			case 4:
-				{
-					def.APB2CLKDivider = RCC_APB2_DIV4;
-					break;
-				}
-			case 8:
-				{
-					def.APB2CLKDivider = RCC_APB2_DIV8;
-					break;
-				}
-			case 16:
-				{
-					def.APB2CLKDivider = RCC_APB2_DIV16;
-					break;
-				}
-			default:
-				{
-					throw std::invalid_argument{"不支持此分频"};
-				}
-			}
-
-			HAL_StatusTypeDef ret = HAL_RCC_ClockConfig(&def,
-														FLASH_LATENCY_2);
-
-			if (ret != HAL_StatusTypeDef::HAL_OK)
-			{
-				throw std::runtime_error{"时钟信号配置失败"};
-			}
+			return _input_divider;
 		}
-
-		/* #endregion */
 	};
+
 } // namespace bsp
