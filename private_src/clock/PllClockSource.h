@@ -20,7 +20,7 @@ namespace bsp
 			uint32_t _r{};
 		};
 
-		inline static bool _opened = false;
+		inline static bool _configured = false;
 		inline static base::unit::MHz _p_freq;
 		inline static base::unit::MHz _q_freq;
 		inline static base::unit::MHz _r_freq;
@@ -28,6 +28,16 @@ namespace bsp
 		static uint32_t input_channel_name_to_define_value(std::string const &input_channel_name);
 
 		static Factors get_factors(std::map<std::string, uint32_t> const &channel_factor_map);
+
+		static base::unit::MHz get_input_frequency(std::string const &input_channel_name);
+
+		///
+		/// @brief
+		///
+		/// @param m_channel_output_frequency m 通道的输出频率。
+		/// @return
+		///
+		static uint32_t calculate_pll_range(base::unit::MHz const &m_channel_output_frequency);
 
 	public:
 		virtual base::unit::MHz Frequency(std::string const &output_channel_name) const override;
@@ -46,7 +56,7 @@ namespace bsp
 				throw std::runtime_error{"关闭 PLL 失败。"};
 			}
 
-			_opened = false;
+			_configured = false;
 		}
 	};
 
