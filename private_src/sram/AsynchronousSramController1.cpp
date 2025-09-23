@@ -52,3 +52,9 @@ void bsp::AsynchronousSramController1::Initialize(std::string const &clock_sourc
 		throw std::runtime_error{CODE_POS_STR + "初始化失败"};
 	}
 }
+
+void bsp::AsynchronousSramController1::Initialize(std::string const &clock_source_name,
+												  uint32_t divider,
+												  base::asynchronous_sram::asynchronous_sram_timing const &timing)
+{
+}
