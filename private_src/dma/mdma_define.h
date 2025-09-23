@@ -9,48 +9,116 @@ namespace bsp
 {
 	namespace mdma
 	{
-		constexpr uint32_t source_align_byte_count_to_define_value(size_t align_byte_count)
+		constexpr uint32_t source_align_byte_count_to_define_value(size_t align_byte_count,
+																   bool increase)
 		{
-			switch (align_byte_count)
+			if (increase)
 			{
-			case 1:
+				switch (align_byte_count)
 				{
-					return MDMA_SRC_INC_BYTE;
+				case 1:
+					{
+						return MDMA_SRC_INC_BYTE;
+					}
+				case 2:
+					{
+						return MDMA_SRC_INC_HALFWORD;
+					}
+				case 4:
+					{
+						return MDMA_SRC_INC_WORD;
+					}
+				case 8:
+					{
+						return MDMA_SRC_INC_DOUBLEWORD;
+					}
+				default:
+					{
+						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+					}
 				}
-			case 2:
+			}
+			else
+			{
+				switch (align_byte_count)
 				{
-					return MDMA_SRC_INC_HALFWORD;
-				}
-			case 4:
-				{
-					return MDMA_SRC_INC_WORD;
-				}
-			default:
-				{
-					throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+				case 1:
+					{
+						return MDMA_SRC_DEC_BYTE;
+					}
+				case 2:
+					{
+						return MDMA_SRC_DEC_HALFWORD;
+					}
+				case 4:
+					{
+						return MDMA_SRC_DEC_WORD;
+					}
+				case 8:
+					{
+						return MDMA_SRC_DEC_DOUBLEWORD;
+					}
+				default:
+					{
+						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+					}
 				}
 			}
 		}
 
-		constexpr uint32_t destination_align_byte_count_to_define_value(size_t align_byte_count)
+		constexpr uint32_t destination_align_byte_count_to_define_value(size_t align_byte_count,
+																		bool increase)
 		{
-			switch (align_byte_count)
+			if (increase)
 			{
-			case 1:
+				switch (align_byte_count)
 				{
-					return DMA_MDATAALIGN_BYTE;
+				case 1:
+					{
+						return MDMA_DEST_INC_BYTE;
+					}
+				case 2:
+					{
+						return MDMA_DEST_INC_HALFWORD;
+					}
+				case 4:
+					{
+						return MDMA_DEST_INC_WORD;
+					}
+				case 8:
+					{
+						return MDMA_DEST_INC_DOUBLEWORD;
+					}
+				default:
+					{
+						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+					}
 				}
-			case 2:
+			}
+			else
+			{
+				switch (align_byte_count)
 				{
-					return DMA_MDATAALIGN_HALFWORD;
-				}
-			case 4:
-				{
-					return DMA_MDATAALIGN_WORD;
-				}
-			default:
-				{
-					throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+				case 1:
+					{
+						return MDMA_DEST_DEC_BYTE;
+					}
+				case 2:
+					{
+						return MDMA_DEST_DEC_HALFWORD;
+					}
+				case 4:
+					{
+						return MDMA_DEST_DEC_WORD;
+					}
+				case 8:
+					{
+						return MDMA_DEST_DEC_DOUBLEWORD;
+					}
+				default:
+					{
+						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+					}
 				}
 			}
 		}
