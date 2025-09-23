@@ -9,8 +9,8 @@ namespace bsp
 {
 	namespace mdma
 	{
-		constexpr uint32_t source_align_byte_count_to_define_value(size_t align_byte_count,
-																   bool increase)
+		constexpr uint32_t source_align_byte_count_to_increase_define_value(size_t align_byte_count,
+																			bool increase)
 		{
 			if (increase)
 			{
@@ -66,8 +66,8 @@ namespace bsp
 			}
 		}
 
-		constexpr uint32_t destination_align_byte_count_to_define_value(size_t align_byte_count,
-																		bool increase)
+		constexpr uint32_t destination_align_byte_count_to_increase_define_value(size_t align_byte_count,
+																				 bool increase)
 		{
 			if (increase)
 			{

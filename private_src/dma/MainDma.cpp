@@ -1,5 +1,6 @@
 #include "MainDma.h" // IWYU pragma: keep
 #include "base/embedded/interrupt/interrupt.h"
+#include "mdma_define.h"
 #include <functional>
 
 /* #region 中断服务函数 */
@@ -82,8 +83,12 @@ void bsp::MainDma::Initialize(size_t align)
 	// 保留的意思是保留原数据的字节序，不进行转换。
 	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
 
-	_handle_context._handle.Init.SourceInc = MDMA_SRC_INC_WORD;
-	_handle_context._handle.Init.DestinationInc = MDMA_DEST_INC_WORD;
+	// 源地址的数据对齐。
+	_handle_context._handle.Init.SourceInc = bsp::mdma::source_align_byte_count_to_increase_define_value(align, true);
+
+	// 目标地址的数据对齐。
+	_handle_context._handle.Init.DestinationInc = bsp::mdma::destination_align_byte_count_to_increase_define_value(align, true);
+
 	_handle_context._handle.Init.SourceDataSize = MDMA_SRC_DATASIZE_WORD;
 	_handle_context._handle.Init.DestDataSize = MDMA_DEST_DATASIZE_WORD;
 	_handle_context._handle.Init.DataAlignment = MDMA_DATAALIGN_PACKENABLE;
