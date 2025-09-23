@@ -8,7 +8,5 @@ public:
 
 	virtual void Initialize(base::asynchronous_sram::asynchronous_sram_timing const &timing) = 0;
 
-	virtual base::asynchronous_sram::asynchronous_sram_timing Timing() const = 0;
-
 	virtual base::Span Span() = 0;
 };

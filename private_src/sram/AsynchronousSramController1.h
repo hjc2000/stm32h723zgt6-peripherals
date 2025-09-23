@@ -11,7 +11,6 @@ namespace bsp
 	{
 	private:
 		base::UsageStateManager<AsynchronousSramController1> _usage_state_manager{};
-		base::asynchronous_sram::asynchronous_sram_timing _timing{};
 		SRAM_HandleTypeDef _sram_handle{};
 
 	public:
@@ -21,11 +20,6 @@ namespace bsp
 		}
 
 		virtual void Initialize(base::asynchronous_sram::asynchronous_sram_timing const &timing) override;
-
-		virtual base::asynchronous_sram::asynchronous_sram_timing Timing() const override
-		{
-			return _timing;
-		}
 
 		virtual base::Span Span() override
 		{

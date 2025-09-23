@@ -12,11 +12,6 @@ void base::asynchronous_sram::initialize(base::asynchronous_sram::asynchronous_s
 	self.Initialize(timing);
 }
 
-base::asynchronous_sram::asynchronous_sram_timing base::asynchronous_sram::timing(base::asynchronous_sram::asynchronous_sram_controller_handle &self)
-{
-	return self.Timing();
-}
-
 base::Span base::asynchronous_sram::span(base::asynchronous_sram::asynchronous_sram_controller_handle &self)
 {
 	return self.Span();

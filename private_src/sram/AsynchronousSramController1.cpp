@@ -4,7 +4,6 @@
 
 void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::asynchronous_sram_timing const &timing)
 {
-	_timing = timing;
 	__HAL_RCC_FMC_CLK_ENABLE();
 
 	/** Perform the SRAM1 memory initialization sequence
@@ -31,10 +30,10 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::async
 
 	/* Timing */
 	FMC_NORSRAM_TimingTypeDef Timing{};
-	Timing.AddressSetupTime = _timing.address_setup_clock_cycle_count();
-	Timing.AddressHoldTime = _timing.address_hold_clock_cycle_count();
-	Timing.DataSetupTime = _timing.data_setup_clock_cycle_count();
-	Timing.BusTurnAroundDuration = _timing.bus_turn_around_clock_cycle_count();
+	Timing.AddressSetupTime = timing.address_setup_clock_cycle_count();
+	Timing.AddressHoldTime = timing.address_hold_clock_cycle_count();
+	Timing.DataSetupTime = timing.data_setup_clock_cycle_count();
+	Timing.BusTurnAroundDuration = timing.bus_turn_around_clock_cycle_count();
 	Timing.AccessMode = FMC_ACCESS_MODE_A;
 
 	HAL_StatusTypeDef result = HAL_SRAM_Init(&_sram_handle, &Timing, nullptr);
