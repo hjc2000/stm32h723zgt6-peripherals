@@ -29,14 +29,14 @@ void bsp::AsynchronousSramController1::Initialize(base::asynchronous_sram::async
 	_sram_handle.Init.PageSize = FMC_PAGE_SIZE_NONE;
 
 	/* Timing */
-	FMC_NORSRAM_TimingTypeDef Timing{};
-	Timing.AddressSetupTime = timing.address_setup_clock_cycle_count();
-	Timing.AddressHoldTime = timing.address_hold_clock_cycle_count();
-	Timing.DataSetupTime = timing.data_setup_clock_cycle_count();
-	Timing.BusTurnAroundDuration = timing.bus_turn_around_clock_cycle_count();
-	Timing.AccessMode = FMC_ACCESS_MODE_A;
+	FMC_NORSRAM_TimingTypeDef hal_timing{};
+	hal_timing.AddressSetupTime = timing.address_setup_clock_cycle_count();
+	hal_timing.AddressHoldTime = timing.address_hold_clock_cycle_count();
+	hal_timing.DataSetupTime = timing.data_setup_clock_cycle_count();
+	hal_timing.BusTurnAroundDuration = timing.bus_turn_around_clock_cycle_count();
+	hal_timing.AccessMode = FMC_ACCESS_MODE_A;
 
-	HAL_StatusTypeDef result = HAL_SRAM_Init(&_sram_handle, &Timing, nullptr);
+	HAL_StatusTypeDef result = HAL_SRAM_Init(&_sram_handle, &hal_timing, nullptr);
 	if (result != HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败"};
