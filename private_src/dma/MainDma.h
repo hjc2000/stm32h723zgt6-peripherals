@@ -35,14 +35,19 @@ namespace bsp
 
 		void OnCompleteCallback()
 		{
+			_complete_signal.ReleaseFromIsr();
 		}
 
 		void OnErrorCallback()
 		{
+			_is_error = true;
+			_complete_signal.ReleaseFromIsr();
 		}
 
 		void OnAbortCallback()
 		{
+			_is_abort = true;
+			_complete_signal.ReleaseFromIsr();
 		}
 
 	public:
