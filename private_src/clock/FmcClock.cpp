@@ -80,7 +80,7 @@ void bsp::FmcClock::Configure(std::string const &input_channel_name)
 	if (input_channel_name == "pll2_r")
 	{
 		bsp::PllClockSource2 pll2_clock_source{};
-		RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{pll2_clock_source.HalInitializationConfiguration()};
+		RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = pll2_clock_source.HalInitializationConfiguration();
 		PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_FMC;
 		PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_PLL2;
 		HAL_StatusTypeDef result = HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
