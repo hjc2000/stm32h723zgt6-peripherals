@@ -9,12 +9,11 @@ namespace bsp
 {
 	namespace mdma
 	{
-		constexpr uint32_t source_align_byte_count_to_increase_define_value(size_t align_byte_count,
-																			bool increase)
+		constexpr uint32_t source_increase_size_to_define(size_t size, bool increase)
 		{
 			if (increase)
 			{
-				switch (align_byte_count)
+				switch (size)
 				{
 				case 1:
 					{
@@ -34,13 +33,13 @@ namespace bsp
 					}
 				default:
 					{
-						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+						throw std::invalid_argument{CODE_POS_STR + "非法递增大小。"};
 					}
 				}
 			}
 			else
 			{
-				switch (align_byte_count)
+				switch (size)
 				{
 				case 1:
 					{
@@ -60,18 +59,17 @@ namespace bsp
 					}
 				default:
 					{
-						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+						throw std::invalid_argument{CODE_POS_STR + "非法递增大小。"};
 					}
 				}
 			}
 		}
 
-		constexpr uint32_t destination_align_byte_count_to_increase_define_value(size_t align_byte_count,
-																				 bool increase)
+		constexpr uint32_t destination_increase_size_to_define(size_t size, bool increase)
 		{
 			if (increase)
 			{
-				switch (align_byte_count)
+				switch (size)
 				{
 				case 1:
 					{
@@ -91,13 +89,13 @@ namespace bsp
 					}
 				default:
 					{
-						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+						throw std::invalid_argument{CODE_POS_STR + "非法递增大小。"};
 					}
 				}
 			}
 			else
 			{
-				switch (align_byte_count)
+				switch (size)
 				{
 				case 1:
 					{
@@ -117,8 +115,62 @@ namespace bsp
 					}
 				default:
 					{
-						throw std::invalid_argument{CODE_POS_STR + "非法对齐字节数。"};
+						throw std::invalid_argument{CODE_POS_STR + "非法递增大小。"};
 					}
+				}
+			}
+		}
+
+		constexpr uint32_t source_data_size_to_define(size_t size)
+		{
+			switch (size)
+			{
+			case 1:
+				{
+					return MDMA_SRC_DATASIZE_BYTE;
+				}
+			case 2:
+				{
+					return MDMA_SRC_DATASIZE_HALFWORD;
+				}
+			case 4:
+				{
+					return MDMA_SRC_DATASIZE_WORD;
+				}
+			case 8:
+				{
+					return MDMA_SRC_DATASIZE_DOUBLEWORD;
+				}
+			default:
+				{
+					throw std::invalid_argument{CODE_POS_STR + "非法数据大小。"};
+				}
+			}
+		}
+
+		constexpr uint32_t destination_data_size_to_define(size_t size)
+		{
+			switch (size)
+			{
+			case 1:
+				{
+					return MDMA_DEST_DATASIZE_BYTE;
+				}
+			case 2:
+				{
+					return MDMA_DEST_DATASIZE_HALFWORD;
+				}
+			case 4:
+				{
+					return MDMA_DEST_DATASIZE_WORD;
+				}
+			case 8:
+				{
+					return MDMA_DEST_DATASIZE_DOUBLEWORD;
+				}
+			default:
+				{
+					throw std::invalid_argument{CODE_POS_STR + "非法数据大小。"};
 				}
 			}
 		}

@@ -84,13 +84,17 @@ void bsp::MainDma::Initialize(size_t align)
 	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
 
 	// 源地址的数据对齐。
-	_handle_context._handle.Init.SourceInc = bsp::mdma::source_align_byte_count_to_increase_define_value(align, true);
+	_handle_context._handle.Init.SourceInc = bsp::mdma::source_increase_size_to_define(align, true);
 
 	// 目标地址的数据对齐。
-	_handle_context._handle.Init.DestinationInc = bsp::mdma::destination_align_byte_count_to_increase_define_value(align, true);
+	_handle_context._handle.Init.DestinationInc = bsp::mdma::destination_increase_size_to_define(align, true);
 
-	_handle_context._handle.Init.SourceDataSize = MDMA_SRC_DATASIZE_WORD;
-	_handle_context._handle.Init.DestDataSize = MDMA_DEST_DATASIZE_WORD;
+	// 源地址每个数据单元的大小。
+	_handle_context._handle.Init.SourceDataSize = bsp::mdma::source_data_size_to_define(align);
+
+	// 目标地址每个数据单元的大小。
+	_handle_context._handle.Init.DestDataSize = bsp::mdma::destination_data_size_to_define(align);
+
 	_handle_context._handle.Init.DataAlignment = MDMA_DATAALIGN_PACKENABLE;
 	_handle_context._handle.Init.BufferTransferLength = 1;
 	_handle_context._handle.Init.SourceBurst = MDMA_SOURCE_BURST_SINGLE;
