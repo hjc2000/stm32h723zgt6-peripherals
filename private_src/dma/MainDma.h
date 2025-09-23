@@ -23,6 +23,19 @@ namespace bsp
 		handle_context _handle_context{this};
 
 		void InitializeInterrupt();
+		void InitializeCallback();
+
+		void OnCompleteCallback()
+		{
+		}
+
+		void OnErrorCallback()
+		{
+		}
+
+		void OnAbortCallback()
+		{
+		}
 
 	public:
 		virtual void Initialize() override;

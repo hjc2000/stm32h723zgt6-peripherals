@@ -40,6 +40,27 @@ void bsp::MainDma::Initialize()
 	Initialize(1);
 }
 
+void bsp::MainDma::InitializeCallback()
+{
+	_handle_context._handle.XferCpltCallback = [](MDMA_HandleTypeDef *handle)
+	{
+		handle_context *context = reinterpret_cast<handle_context *>(handle);
+		context->_self->OnCompleteCallback();
+	};
+
+	_handle_context._handle.XferErrorCallback = [](MDMA_HandleTypeDef *handle)
+	{
+		handle_context *context = reinterpret_cast<handle_context *>(handle);
+		context->_self->OnErrorCallback();
+	};
+
+	_handle_context._handle.XferAbortCallback = [](MDMA_HandleTypeDef *handle)
+	{
+		handle_context *context = reinterpret_cast<handle_context *>(handle);
+		context->_self->OnAbortCallback();
+	};
+}
+
 void bsp::MainDma::Initialize(size_t align)
 {
 	__HAL_RCC_MDMA_CLK_ENABLE();
@@ -47,7 +68,7 @@ void bsp::MainDma::Initialize(size_t align)
 	_handle_context._handle.Instance = MDMA_Channel0;
 	_handle_context._handle.Init.Request = MDMA_REQUEST_SW;
 	_handle_context._handle.Init.TransferTriggerMode = MDMA_BUFFER_TRANSFER;
-	_handle_context._handle.Init.Priority = MDMA_PRIORITY_LOW;
+	_handle_context._handle.Init.Priority = MDMA_PRIORITY_VERY_HIGH;
 	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
 	_handle_context._handle.Init.SourceInc = MDMA_SRC_INC_WORD;
 	_handle_context._handle.Init.DestinationInc = MDMA_DEST_INC_WORD;
@@ -63,6 +84,9 @@ void bsp::MainDma::Initialize(size_t align)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化 MDMA 失败。"};
 	}
+
+	InitializeInterrupt();
+	InitializeCallback();
 }
 
 void bsp::MainDma::Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst)
