@@ -20,13 +20,7 @@ namespace bsp
 			base::asynchronous_sram::msp_initialize_callback(1);
 		}
 
-		virtual void Initialize(std::string const &clock_source_name,
-								uint32_t divider,
-								base::asynchronous_sram::ISRAMTimingProvider const &timing_provider) override;
-
-		virtual void Initialize(std::string const &clock_source_name,
-								uint32_t divider,
-								base::asynchronous_sram::asynchronous_sram_timing const &timing) override;
+		virtual void Initialize(base::asynchronous_sram::asynchronous_sram_timing const &timing) override;
 
 		virtual base::asynchronous_sram::asynchronous_sram_timing Timing() const override
 		{
