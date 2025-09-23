@@ -115,13 +115,18 @@ void bsp::MainDma::Initialize(size_t align)
 	_handle_context._handle.Init.BufferTransferLength = 128;
 
 	// 从源地址读取数据时的突发大小。
+	//
+	// SINGLE 表示一次只读取一个数据，数据的字节数为 SourceDataSize.
 	_handle_context._handle.Init.SourceBurst = MDMA_SOURCE_BURST_SINGLE;
 
 	// 向目标地址写入数据时的突发大小。
+	//
+	// SINGLE 表示一次只写入一个数据，数据的字节数为 DestDataSize.
 	_handle_context._handle.Init.DestBurst = MDMA_DEST_BURST_SINGLE;
 
 	_handle_context._handle.Init.SourceBlockAddressOffset = 0;
 	_handle_context._handle.Init.DestBlockAddressOffset = 0;
+
 	if (HAL_MDMA_Init(&_handle_context._handle) != HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化 MDMA 失败。"};
