@@ -65,6 +65,7 @@ void bsp::MainDma::InitializeCallback()
 
 void bsp::MainDma::Initialize(size_t align)
 {
+	_align = align;
 	__HAL_RCC_MDMA_CLK_ENABLE();
 
 	_handle_context._handle.Instance = MDMA_Channel0;
@@ -152,15 +153,16 @@ void bsp::MainDma::Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst)
 	_is_error = false;
 	_is_abort = false;
 
-	// HAL_StatusTypeDef result = HAL_DMA_Start_IT(&_handle_context._handle,
-	// 											reinterpret_cast<uint32_t>(begin),
-	// 											reinterpret_cast<uint32_t>(dst),
-	// 											static_cast<uint32_t>((end - begin) / _align));
+	HAL_StatusTypeDef result = HAL_MDMA_Start_IT(&_handle_context._handle,
+												 reinterpret_cast<uint32_t>(begin),
+												 reinterpret_cast<uint32_t>(dst),
+												 static_cast<uint32_t>((end - begin) / _align),
+												 1);
 
-	// if (result != HAL_StatusTypeDef::HAL_OK)
-	// {
-	// 	throw std::runtime_error{CODE_POS_STR + "DMA 启动失败。"};
-	// }
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{CODE_POS_STR + "DMA 启动失败。"};
+	}
 
 	_complete_signal.Acquire();
 	if (_is_error)
