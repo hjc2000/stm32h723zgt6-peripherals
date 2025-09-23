@@ -76,7 +76,12 @@ void bsp::MainDma::Initialize(size_t align)
 
 	// 传输优先级。
 	_handle_context._handle.Init.Priority = MDMA_PRIORITY_VERY_HIGH;
+
+	// 保留为小端序。
+	// 因为 ARM 本身是小端序的，所以叫作保留。
+	// 保留的意思是保留原数据的字节序，不进行转换。
 	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
+
 	_handle_context._handle.Init.SourceInc = MDMA_SRC_INC_WORD;
 	_handle_context._handle.Init.DestinationInc = MDMA_DEST_INC_WORD;
 	_handle_context._handle.Init.SourceDataSize = MDMA_SRC_DATASIZE_WORD;
