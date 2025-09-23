@@ -95,10 +95,31 @@ void bsp::MainDma::Initialize(size_t align)
 	// 目标地址每个数据单元的大小。
 	_handle_context._handle.Init.DestDataSize = bsp::mdma::destination_data_size_to_define(align);
 
+	// 源地址和目的地址的数据单元大小不一样是，采用的对齐方式。
+	//
+	// 可以选择
+	// 		1. 打包
+	// 		2. 右对齐
+	// 		3. 有符号地右对齐
+	// 		4. 左对齐
+	//
+	// 打包的意思是将多个小单元合并成一个大单元。
 	_handle_context._handle.Init.DataAlignment = MDMA_DATAALIGN_PACKENABLE;
-	_handle_context._handle.Init.BufferTransferLength = 1;
+
+	// 传输缓冲区大小。
+	//
+	// TransferTriggerMode 设置为 MDMA_BUFFER_TRANSFER 时每次请求搬运这么多数据。
+	//
+	// TransferTriggerMode 设置为 MDMA_BLOCK_TRANSFER 时，决定了内部 FIFO 的大小，
+	// 后续设置的突发大小不能超过此值。
+	_handle_context._handle.Init.BufferTransferLength = 128;
+
+	// 从源地址读取数据时的突发大小。
 	_handle_context._handle.Init.SourceBurst = MDMA_SOURCE_BURST_SINGLE;
+
+	// 向目标地址写入数据时的突发大小。
 	_handle_context._handle.Init.DestBurst = MDMA_DEST_BURST_SINGLE;
+
 	_handle_context._handle.Init.SourceBlockAddressOffset = 0;
 	_handle_context._handle.Init.DestBlockAddressOffset = 0;
 	if (HAL_MDMA_Init(&_handle_context._handle) != HAL_OK)
