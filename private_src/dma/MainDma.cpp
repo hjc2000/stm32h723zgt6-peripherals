@@ -66,8 +66,15 @@ void bsp::MainDma::Initialize(size_t align)
 	__HAL_RCC_MDMA_CLK_ENABLE();
 
 	_handle_context._handle.Instance = MDMA_Channel0;
+
+	// 软件请求触发
 	_handle_context._handle.Init.Request = MDMA_REQUEST_SW;
-	_handle_context._handle.Init.TransferTriggerMode = MDMA_BUFFER_TRANSFER;
+
+	// 块传输。
+	// 这样可以每次启动传输都更改源地址、目的地址、传输大小。
+	_handle_context._handle.Init.TransferTriggerMode = MDMA_BLOCK_TRANSFER;
+
+	// 传输优先级。
 	_handle_context._handle.Init.Priority = MDMA_PRIORITY_VERY_HIGH;
 	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
 	_handle_context._handle.Init.SourceInc = MDMA_SRC_INC_WORD;
