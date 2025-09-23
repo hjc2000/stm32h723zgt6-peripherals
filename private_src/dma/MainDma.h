@@ -1,4 +1,6 @@
 #pragma once
+#include "base/task/BinarySemaphore.h"
+#include "base/UsageStateManager.h"
 #include "hal.h" // IWYU pragma: keep
 #include "memory_dma_handle.h"
 
@@ -20,7 +22,13 @@ namespace bsp
 			MainDma *_self{};
 		};
 
+		base::UsageStateManager<MainDma> _usage_state_manager{};
 		handle_context _handle_context{this};
+		base::task::Mutex _lock{};
+		base::task::BinarySemaphore _complete_signal{false};
+		size_t _align = 4;
+		bool _is_error = false;
+		bool _is_abort = false;
 
 		void InitializeInterrupt();
 		void InitializeCallback();

@@ -1,4 +1,5 @@
 #include "MainDma.h" // IWYU pragma: keep
+#include "base/embedded/cache/cache.h"
 #include "base/embedded/interrupt/interrupt.h"
 #include "mdma_define.h"
 #include <functional>
@@ -138,4 +139,39 @@ void bsp::MainDma::Initialize(size_t align)
 
 void bsp::MainDma::Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst)
 {
+	base::task::MutexGuard g{_lock};
+
+	base::cache::clean_d_cache(begin, end - begin);
+
+	// 如果 CPU 修改了 dst 处的数据，要先清理缓存，否则等会儿 DMA 向 RAM 写入数据后
+	// 无效化缓存，会把 CPU 修改的脏数据丢弃，让 DMA 写入 RAM 的数据强行覆盖到缓存中。
+	//
+	// 所以这里要清理缓存比较保险。
+	base::cache::clean_d_cache(dst, end - begin);
+
+	_is_error = false;
+	_is_abort = false;
+
+	// HAL_StatusTypeDef result = HAL_DMA_Start_IT(&_handle_context._handle,
+	// 											reinterpret_cast<uint32_t>(begin),
+	// 											reinterpret_cast<uint32_t>(dst),
+	// 											static_cast<uint32_t>((end - begin) / _align));
+
+	// if (result != HAL_StatusTypeDef::HAL_OK)
+	// {
+	// 	throw std::runtime_error{CODE_POS_STR + "DMA 启动失败。"};
+	// }
+
+	_complete_signal.Acquire();
+	if (_is_error)
+	{
+		throw std::runtime_error{CODE_POS_STR + "DMA 传输发生错误。"};
+	}
+
+	if (_is_abort)
+	{
+		throw std::runtime_error{CODE_POS_STR + "DMA 传输被中止。"};
+	}
+
+	base::cache::invalidate_d_cache(dst, end - begin);
 }
