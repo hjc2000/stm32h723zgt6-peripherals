@@ -1,8 +1,70 @@
 #include "MainDma.h" // IWYU pragma: keep
+#include "base/embedded/interrupt/interrupt.h"
 #include <functional>
+
+/* #region 中断服务函数 */
 
 namespace
 {
 	std::function<void()> _dma_isr;
 
+}
+
+extern "C"
+{
+	void MDMA_IRQHandler(void)
+	{
+		if (_dma_isr != nullptr)
+		{
+			_dma_isr();
+		}
+	}
+}
+
+/* #endregion */
+
+void bsp::MainDma::InitializeInterrupt()
+{
+	base::interrupt::disable_interrupt(static_cast<uint32_t>(IRQn_Type::MDMA_IRQn));
+
+	_dma_isr = [this]()
+	{
+		HAL_MDMA_IRQHandler(&_handle_context._handle);
+	};
+
+	base::interrupt::enable_interrupt(static_cast<uint32_t>(IRQn_Type::MDMA_IRQn), 10);
+}
+
+void bsp::MainDma::Initialize()
+{
+	Initialize(1);
+}
+
+void bsp::MainDma::Initialize(size_t align)
+{
+	__HAL_RCC_MDMA_CLK_ENABLE();
+
+	_handle_context._handle.Instance = MDMA_Channel0;
+	_handle_context._handle.Init.Request = MDMA_REQUEST_SW;
+	_handle_context._handle.Init.TransferTriggerMode = MDMA_BUFFER_TRANSFER;
+	_handle_context._handle.Init.Priority = MDMA_PRIORITY_LOW;
+	_handle_context._handle.Init.Endianness = MDMA_LITTLE_ENDIANNESS_PRESERVE;
+	_handle_context._handle.Init.SourceInc = MDMA_SRC_INC_WORD;
+	_handle_context._handle.Init.DestinationInc = MDMA_DEST_INC_WORD;
+	_handle_context._handle.Init.SourceDataSize = MDMA_SRC_DATASIZE_WORD;
+	_handle_context._handle.Init.DestDataSize = MDMA_DEST_DATASIZE_WORD;
+	_handle_context._handle.Init.DataAlignment = MDMA_DATAALIGN_PACKENABLE;
+	_handle_context._handle.Init.BufferTransferLength = 1;
+	_handle_context._handle.Init.SourceBurst = MDMA_SOURCE_BURST_SINGLE;
+	_handle_context._handle.Init.DestBurst = MDMA_DEST_BURST_SINGLE;
+	_handle_context._handle.Init.SourceBlockAddressOffset = 0;
+	_handle_context._handle.Init.DestBlockAddressOffset = 0;
+	if (HAL_MDMA_Init(&_handle_context._handle) != HAL_OK)
+	{
+		throw std::runtime_error{CODE_POS_STR + "初始化 MDMA 失败。"};
+	}
+}
+
+void bsp::MainDma::Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst)
+{
 }

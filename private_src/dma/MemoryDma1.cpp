@@ -6,6 +6,8 @@
 #include <functional>
 #include <stdexcept>
 
+/* #region 中断服务函数 */
+
 namespace
 {
 	std::function<void()> _dma_isr;
@@ -22,6 +24,8 @@ extern "C"
 		}
 	}
 }
+
+/* #endregion */
 
 void bsp::MemoryDma1::InitializeCallback()
 {

@@ -20,11 +20,16 @@ namespace bsp
 			MainDma *_self{};
 		};
 
-	public:
-		virtual void Initialize() override = 0;
-		virtual void Initialize(size_t align) override = 0;
+		handle_context _handle_context{this};
 
-		virtual void Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst) override = 0;
+		void InitializeInterrupt();
+
+	public:
+		virtual void Initialize() override;
+
+		virtual void Initialize(size_t align) override;
+
+		virtual void Copy(uint8_t const *begin, uint8_t const *end, uint8_t *dst) override;
 	};
 
 } // namespace bsp
