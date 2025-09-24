@@ -135,6 +135,10 @@ void bsp::MainDma::Initialize(size_t align)
 	// 		偏移量 = 字段大小 + 字段之间的间隔。
 	//
 	// 注意，单位是字节，不是元素的大小。即不是 SourceDataSize.
+	//
+	// SourceBlockAddressOffset 和 DestBlockAddressOffset 都设置为 0,
+	// 这样即使 HAL_MDMA_Start_IT 中要拷贝的块的个数不小心设置为大于 1 的值，
+	// 也只是对着相同内存拷贝多次而已，是幂等的。
 	_handle_context._handle.Init.SourceBlockAddressOffset = 0;
 
 	// 参考 SourceBlockAddressOffset 的注释。
