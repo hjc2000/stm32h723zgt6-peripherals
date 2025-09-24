@@ -126,10 +126,22 @@ void bsp::MainDma::Initialize(size_t align)
 	// SINGLE 表示一次只写入一个数据，数据的字节数为 DestDataSize.
 	_handle_context._handle.Init.DestBurst = MDMA_DEST_BURST_SINGLE;
 
+	// HAL_MDMA_Start_IT 函数的参数中可以传入要拷贝的块的个数。当传入的拷贝的块的个数
+	// 大于 1 时，拷贝完一个块后，需要将起始指针移动到下一个块的起始地址。
+	//
+	// 这里是定义下一个块的起始地址相对于当前块的起始地址的偏移量。偏移量的单位是字节。
+	// 对于紧凑的数组，偏移量就是数组元素的大小，也即字节数。
+	// 对于结构体字段这种不紧凑的，有间隙的，关系为：
+	// 		偏移量 = 字段大小 + 字段之间的间隔。
+	//
+	// 注意，单位是字节，不是元素的大小。即不是 SourceDataSize.
 	_handle_context._handle.Init.SourceBlockAddressOffset = 0;
+
+	// 参考 SourceBlockAddressOffset 的注释。
 	_handle_context._handle.Init.DestBlockAddressOffset = 0;
 
-	if (HAL_MDMA_Init(&_handle_context._handle) != HAL_OK)
+	HAL_StatusTypeDef result = HAL_MDMA_Init(&_handle_context._handle);
+	if (result != HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化 MDMA 失败。"};
 	}
