@@ -189,19 +189,19 @@ namespace bsp
 			_suspend_callback = callback;
 		}
 
-		void SetResumeCallback(std::function<void()> const &callback)
+		virtual void SetResumeCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_resume_callback = callback;
 		}
 
-		void SetConnectCallback(std::function<void()> const &callback)
+		virtual void SetConnectCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_connect_callback = callback;
 		}
 
-		void SetDisconnectCallback(std::function<void()> const &callback)
+		virtual void SetDisconnectCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_disconnect_callback = callback;

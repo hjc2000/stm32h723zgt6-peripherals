@@ -20,5 +20,11 @@ public:
 
 	virtual void SetSuspendCallback(std::function<void()> const &callback) = 0;
 
+	virtual void SetResumeCallback(std::function<void()> const &callback) = 0;
+
+	virtual void SetConnectCallback(std::function<void()> const &callback) = 0;
+
+	virtual void SetDisconnectCallback(std::function<void()> const &callback) = 0;
+
 	/* #endregion */
 };
