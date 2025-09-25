@@ -319,23 +319,6 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 }
 
 /**
- * @brief  De-Initializes the low level portion of the device driver.
- * @param  pdev: Device handle
- * @retval USBD status
- */
-USBD_StatusTypeDef USBD_LL_DeInit(USBD_HandleTypeDef *pdev)
-{
-	HAL_StatusTypeDef hal_status = HAL_OK;
-	USBD_StatusTypeDef usb_status = USBD_OK;
-
-	hal_status = HAL_PCD_DeInit(reinterpret_cast<PCD_HandleTypeDef *>(pdev->pData));
-
-	usb_status = USBD_Get_USB_Status(hal_status);
-
-	return usb_status;
-}
-
-/**
  * @brief  Starts the low level portion of the device driver.
  * @param  pdev: Device handle
  * @retval USBD status
