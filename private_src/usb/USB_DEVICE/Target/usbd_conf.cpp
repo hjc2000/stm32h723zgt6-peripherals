@@ -68,20 +68,6 @@ USBD_StatusTypeDef USBD_Get_USB_Status(HAL_StatusTypeDef hal_status);
 /* MSP Init */
 
 /**
- * @brief  Setup stage callback
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_SetupStageCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_SetupStageCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), (uint8_t *)(bsp::UsbFsPcd::HalPcdHandle().Setup));
-}
-
-/**
  * @brief  Data Out stage callback.
  * @param  hpcd: PCD handle
  * @param  epnum: Endpoint number
@@ -273,7 +259,6 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SETUPSTAGE_CB_ID, PCD_SetupStageCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESET_CB_ID, PCD_ResetCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID, PCD_ResumeCallback);
