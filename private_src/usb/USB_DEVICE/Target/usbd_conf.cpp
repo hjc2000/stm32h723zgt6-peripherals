@@ -145,7 +145,9 @@ void HAL_PCD_SuspendCallback(PCD_HandleTypeDef *hpcd)
 {
 	/* Inform USB library that core enters in suspend Mode. */
 	USBD_LL_Suspend((USBD_HandleTypeDef *)hpcd->pData);
+
 	__HAL_PCD_GATE_PHYCLOCK(hpcd);
+
 	/* Enter in STOP mode. */
 	/* USER CODE BEGIN 2 */
 	if (hpcd->Init.low_power_enable)
@@ -246,17 +248,19 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	bsp::UsbFsPcd::HalPcdHandle().pData = pdev;
 	pdev->pData = &bsp::UsbFsPcd::HalPcdHandle();
 
-	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
+	{
+		std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
 
-	pcd->SetSofCallback([]()
-						{
-							USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
-						});
+		pcd->SetSofCallback([]()
+							{
+								USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
+							});
 
-	pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
-							   {
-								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
-							   });
+		pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
+								   {
+									   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
+								   });
+	}
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
