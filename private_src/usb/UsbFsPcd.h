@@ -21,12 +21,13 @@ namespace bsp
 			{
 			}
 
-			inline static PCD_HandleTypeDef _handle{};
+			PCD_HandleTypeDef _handle{};
 			UsbFsPcd *_self{};
 		};
 
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
 		hal_pcd_handle_context _hal_pcd_handle_context{this};
+		inline static PCD_HandleTypeDef *_handle{};
 
 		void InitializeInterrupt();
 
@@ -120,13 +121,14 @@ namespace bsp
 		UsbFsPcd()
 		{
 			base::usb::fs_pcd::msp_initialize(1);
+			_handle = &_hal_pcd_handle_context._handle;
 		}
 
 		virtual void InitializeAsDevice(base::usb::PhyType phy_type) override;
 
 		static PCD_HandleTypeDef &HalPcdHandle()
 		{
-			return hal_pcd_handle_context::_handle;
+			return *_handle;
 		}
 
 		/* #region 注册回调 */
