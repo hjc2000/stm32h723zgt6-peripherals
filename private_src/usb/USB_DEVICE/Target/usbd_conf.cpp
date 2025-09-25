@@ -30,40 +30,7 @@
 #include <cstdint>
 #include <memory>
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE END PV */
-
-/* External functions --------------------------------------------------------*/
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
 USBD_StatusTypeDef USBD_Get_USB_Status(HAL_StatusTypeDef hal_status);
-
-/* USER CODE END PFP */
-
-/* Private functions ---------------------------------------------------------*/
-
-/* USER CODE BEGIN 1 */
-/* USER CODE END 1 */
-
-/*******************************************************************************
-					   LL Driver Callbacks (PCD -> USB Device Library)
-*******************************************************************************/
-/* MSP Init */
 
 /**
  * @brief  Data Out stage callback.
