@@ -20,14 +20,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "base/string/define.h"
-#include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_pcd.h"
 #include "usbd_cdc.h"
 #include "usbd_core.h"
 #include "usbd_def.h"
 
-#include "Legacy/stm32_hal_legacy.h"
 #include <stdexcept>
 
 #include "UsbFsPcd.h"

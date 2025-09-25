@@ -21,7 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
 #include "UsbCdcSerialPort.h"
-#include "UsbFsPcd.h"
 #include <cstdint>
 
 /* USER CODE BEGIN INCLUDE */
