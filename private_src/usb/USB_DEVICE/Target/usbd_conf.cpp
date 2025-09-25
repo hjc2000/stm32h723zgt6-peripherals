@@ -27,6 +27,7 @@
 #include "usbd_cdc.h"
 #include "usbd_core.h"
 #include "usbd_def.h"
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 
@@ -254,7 +255,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 
 	pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
 							   {
-								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), (uint8_t *)(bsp::UsbFsPcd::HalPcdHandle().Setup));
+								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
 							   });
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
