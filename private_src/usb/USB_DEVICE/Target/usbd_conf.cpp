@@ -299,23 +299,6 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
  */
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
-	/* Link the driver to the stack. */
-	bsp::UsbFsPcd::HalPcdHandle().Instance = USB_OTG_HS;
-	bsp::UsbFsPcd::HalPcdHandle().Init.dev_endpoints = 9;
-	bsp::UsbFsPcd::HalPcdHandle().Init.speed = PCD_SPEED_FULL;
-	bsp::UsbFsPcd::HalPcdHandle().Init.dma_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.phy_itface = PCD_PHY_EMBEDDED;
-	bsp::UsbFsPcd::HalPcdHandle().Init.Sof_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.low_power_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.lpm_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.battery_charging_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.vbus_sensing_enable = FunctionalState::DISABLE;
-	bsp::UsbFsPcd::HalPcdHandle().Init.use_dedicated_ep1 = FunctionalState::DISABLE;
-	if (HAL_PCD_Init(&bsp::UsbFsPcd::HalPcdHandle()) != HAL_StatusTypeDef::HAL_OK)
-	{
-		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
-	}
-
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SOF_CB_ID, PCD_SOFCallback);
@@ -331,12 +314,6 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	HAL_PCD_RegisterIsoOutIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOOUTIncompleteCallback);
 	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOINIncompleteCallback);
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-
-	/* USER CODE BEGIN TxRx_Configuration */
-	HAL_PCDEx_SetRxFiFo(&bsp::UsbFsPcd::HalPcdHandle(), 0x80);
-	HAL_PCDEx_SetTxFiFo(&bsp::UsbFsPcd::HalPcdHandle(), 0, 0x40);
-	HAL_PCDEx_SetTxFiFo(&bsp::UsbFsPcd::HalPcdHandle(), 1, 0x80);
-	/* USER CODE END TxRx_Configuration */
 
 	return USBD_OK;
 }
