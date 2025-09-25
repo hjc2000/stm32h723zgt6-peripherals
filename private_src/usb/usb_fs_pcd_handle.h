@@ -18,5 +18,7 @@ public:
 
 	virtual void SetResetCallback(std::function<void()> const &callback) = 0;
 
+	virtual void SetSuspendCallback(std::function<void()> const &callback) = 0;
+
 	/* #endregion */
 };

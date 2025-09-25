@@ -183,7 +183,7 @@ namespace bsp
 			_reset_callback = callback;
 		}
 
-		void SetSuspendCallback(std::function<void()> const &callback)
+		virtual void SetSuspendCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_suspend_callback = callback;
