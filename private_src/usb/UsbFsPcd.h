@@ -27,7 +27,7 @@ namespace bsp
 		};
 
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
-		hal_pcd_handle_context _hal_pcd_handle_context{this};
+		hal_pcd_handle_context _handle_context{this};
 		inline static PCD_HandleTypeDef *_handle{};
 
 		void InitializeInterrupt();
@@ -57,8 +57,8 @@ namespace bsp
 			if (_setup_stage_callback)
 			{
 				base::ReadOnlySpan span{
-					reinterpret_cast<uint8_t const *>(_hal_pcd_handle_context._handle.Setup),
-					sizeof(_hal_pcd_handle_context._handle.Setup),
+					reinterpret_cast<uint8_t const *>(_handle_context._handle.Setup),
+					sizeof(_handle_context._handle.Setup),
 				};
 
 				base::usb::fs_pcd::SetupStageCallbackArgs args{span};
@@ -129,21 +129,22 @@ namespace bsp
 		UsbFsPcd()
 		{
 			base::usb::fs_pcd::msp_initialize(1);
-			_handle = &_hal_pcd_handle_context._handle;
+			_handle = &_handle_context._handle;
 		}
 
 		virtual void InitializeAsDevice(base::usb::PhyType phy_type) override;
 
 		virtual void Start() override
 		{
+			HAL_PCD_Start(&_handle_context._handle);
 			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
 		virtual void Suspend() override
 		{
-			__HAL_PCD_GATE_PHYCLOCK(&_hal_pcd_handle_context._handle);
+			__HAL_PCD_GATE_PHYCLOCK(&_handle_context._handle);
 
-			if (_hal_pcd_handle_context._handle.Init.low_power_enable)
+			if (_handle_context._handle.Init.low_power_enable)
 			{
 				/* Set SLEEPDEEP bit and SleepOnExit of Cortex System Control Register. */
 				SCB->SCR |= (uint32_t)((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));

@@ -265,10 +265,7 @@ USBD_StatusTypeDef USBD_LL_Start(USBD_HandleTypeDef *pdev)
 	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
 	pcd->Start();
 
-	hal_status = HAL_PCD_Start(reinterpret_cast<PCD_HandleTypeDef *>(pdev->pData));
-
 	usb_status = USBD_Get_USB_Status(hal_status);
-
 	return usb_status;
 }
 
