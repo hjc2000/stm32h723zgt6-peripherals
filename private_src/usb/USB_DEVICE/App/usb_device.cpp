@@ -26,38 +26,8 @@
 #include "usbd_cdc_if.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
+#include "UsbFsPcd.h"
 #include <stdexcept>
-
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE END PV */
-
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE END PFP */
-
-/* USB Device Core handle declaration. */
-USBD_HandleTypeDef hUsbDeviceFS;
-
-/*
- * -- Insert your variables declaration here --
- */
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/*
- * -- Insert your external function declaration here --
- */
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
 
 /**
  * Init USB device Library, add supported class and start the library
@@ -70,22 +40,22 @@ void MX_USB_DEVICE_Init(void)
 	/* USER CODE END USB_DEVICE_Init_PreTreatment */
 
 	/* Init Device Library, add supported class and start the library. */
-	if (USBD_Init(&hUsbDeviceFS, &FS_Desc, 0) != USBD_OK)
+	if (USBD_Init(&bsp::UsbFsPcd::UsbdHandle(), &FS_Desc, 0) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK)
+	if (USBD_RegisterClass(&bsp::UsbFsPcd::UsbdHandle(), &USBD_CDC) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK)
+	if (USBD_CDC_RegisterInterface(&bsp::UsbFsPcd::UsbdHandle(), &USBD_Interface_fops_FS) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
+	if (USBD_Start(&bsp::UsbFsPcd::UsbdHandle()) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}

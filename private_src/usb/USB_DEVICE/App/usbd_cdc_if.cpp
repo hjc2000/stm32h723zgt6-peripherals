@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
+#include "UsbFsPcd.h"
 #include <cstdint>
 
 /* USER CODE BEGIN INCLUDE */
@@ -107,8 +108,6 @@ uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
  * @{
  */
 
-extern USBD_HandleTypeDef hUsbDeviceFS;
-
 /* USER CODE BEGIN EXPORTED_VARIABLES */
 
 /* USER CODE END EXPORTED_VARIABLES */
@@ -153,8 +152,8 @@ static int8_t CDC_Init_FS(void)
 {
 	/* USER CODE BEGIN 3 */
 	/* Set Application Buffers */
-	USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
-	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
+	USBD_CDC_SetTxBuffer(&bsp::UsbFsPcd::UsbdHandle(), UserTxBufferFS, 0);
+	USBD_CDC_SetRxBuffer(&bsp::UsbFsPcd::UsbdHandle(), UserRxBufferFS);
 	return (USBD_OK);
 	/* USER CODE END 3 */
 }
@@ -263,8 +262,8 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t *pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t *Buf, uint32_t *Len)
 {
 	/* USER CODE BEGIN 6 */
-	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
-	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+	USBD_CDC_SetRxBuffer(&bsp::UsbFsPcd::UsbdHandle(), &Buf[0]);
+	USBD_CDC_ReceivePacket(&bsp::UsbFsPcd::UsbdHandle());
 	return (USBD_OK);
 	/* USER CODE END 6 */
 }
@@ -284,14 +283,14 @@ uint8_t CDC_Transmit_FS(uint8_t *Buf, uint16_t Len)
 {
 	uint8_t result = USBD_OK;
 	/* USER CODE BEGIN 7 */
-	USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)hUsbDeviceFS.pClassData;
+	USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)bsp::UsbFsPcd::UsbdHandle().pClassData;
 	if (hcdc->TxState != 0)
 	{
 		return USBD_BUSY;
 	}
 
-	USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
-	result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+	USBD_CDC_SetTxBuffer(&bsp::UsbFsPcd::UsbdHandle(), Buf, Len);
+	result = USBD_CDC_TransmitPacket(&bsp::UsbFsPcd::UsbdHandle());
 	/* USER CODE END 7 */
 	return result;
 }
