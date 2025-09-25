@@ -99,24 +99,6 @@ void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 }
 
 /**
- * @brief  Reset callback.
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_ResetCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_ResetCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	/* Set Speed. */
-	USBD_LL_SetSpeed((USBD_HandleTypeDef *)hpcd->pData, USBD_SPEED_FULL);
-
-	/* Reset Device. */
-	USBD_LL_Reset((USBD_HandleTypeDef *)hpcd->pData);
-}
-
-/**
  * @brief  Suspend callback.
  * When Low power mode is enabled the debug cannot be used (IAR, Keil doesn't support it)
  * @param  hpcd: PCD handle
@@ -245,9 +227,17 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
 							   });
 
+	pcd->SetResetCallback([]()
+						  {
+							  /* Set Speed. */
+							  USBD_LL_SetSpeed(&bsp::UsbCdcSerialPort::UsbdHandle(), USBD_SPEED_FULL);
+
+							  /* Reset Device. */
+							  USBD_LL_Reset(&bsp::UsbCdcSerialPort::UsbdHandle());
+						  });
+
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESET_CB_ID, PCD_ResetCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID, PCD_ResumeCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_CONNECT_CB_ID, PCD_ConnectCallback);
