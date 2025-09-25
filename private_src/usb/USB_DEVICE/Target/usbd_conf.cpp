@@ -96,33 +96,6 @@ void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 }
 
 /**
- * @brief  Suspend callback.
- * When Low power mode is enabled the debug cannot be used (IAR, Keil doesn't support it)
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_SuspendCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_SuspendCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	/* Inform USB library that core enters in suspend Mode. */
-	USBD_LL_Suspend((USBD_HandleTypeDef *)hpcd->pData);
-
-	__HAL_PCD_GATE_PHYCLOCK(hpcd);
-
-	/* Enter in STOP mode. */
-	/* USER CODE BEGIN 2 */
-	if (hpcd->Init.low_power_enable)
-	{
-		/* Set SLEEPDEEP bit and SleepOnExit of Cortex System Control Register. */
-		SCB->SCR |= (uint32_t)((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
-	}
-	/* USER CODE END 2 */
-}
-
-/**
  * @brief  Resume callback.
  * When Low power mode is enabled the debug cannot be used (IAR, Keil doesn't support it)
  * @param  hpcd: PCD handle
@@ -230,9 +203,14 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 							  USBD_LL_Reset(&bsp::UsbCdcSerialPort::UsbdHandle());
 						  });
 
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
-							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID,
-							 PCD_SuspendCallback);
+	pcd->SetSuspendCallback([]()
+							{
+								/* Inform USB library that core enters in suspend Mode. */
+								USBD_LL_Suspend(&bsp::UsbCdcSerialPort::UsbdHandle());
+
+								std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
+								pcd->Suspend();
+							});
 
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
 							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID,
