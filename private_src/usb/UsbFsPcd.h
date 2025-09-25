@@ -3,7 +3,6 @@
 #include "base/UsageStateManager.h"
 #include "hal.h" // IWYU pragma: keep
 #include "usb_fs_pcd_handle.h"
-#include "usbd_def.h"
 #include <cstdint>
 
 namespace bsp
@@ -24,21 +23,8 @@ namespace bsp
 			UsbFsPcd *_self{};
 		};
 
-		class usbd_handle_context
-		{
-		public:
-			usbd_handle_context(UsbFsPcd *self)
-				: _self{self}
-			{
-			}
-
-			inline static USBD_HandleTypeDef _handle{};
-			UsbFsPcd *_self{};
-		};
-
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
 		hal_pcd_handle_context _hal_pcd_handle_context{this};
-		usbd_handle_context _usbd_handle_context{this};
 
 		void InitializeCallback();
 
@@ -101,11 +87,6 @@ namespace bsp
 		static PCD_HandleTypeDef &HalPcdHandle()
 		{
 			return hal_pcd_handle_context::_handle;
-		}
-
-		static USBD_HandleTypeDef &UsbdHandle()
-		{
-			return usbd_handle_context::_handle;
 		}
 	};
 

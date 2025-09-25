@@ -22,11 +22,11 @@
 
 #include "usb_device.h"
 #include "base/string/define.h"
+#include "UsbCdcSerialPort.h"
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
-#include "UsbFsPcd.h"
 #include <stdexcept>
 
 /**
@@ -40,22 +40,22 @@ void MX_USB_DEVICE_Init(void)
 	/* USER CODE END USB_DEVICE_Init_PreTreatment */
 
 	/* Init Device Library, add supported class and start the library. */
-	if (USBD_Init(&bsp::UsbFsPcd::UsbdHandle(), &FS_Desc, 0) != USBD_OK)
+	if (USBD_Init(&bsp::UsbCdcSerialPort::UsbdHandle(), &FS_Desc, 0) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_RegisterClass(&bsp::UsbFsPcd::UsbdHandle(), &USBD_CDC) != USBD_OK)
+	if (USBD_RegisterClass(&bsp::UsbCdcSerialPort::UsbdHandle(), &USBD_CDC) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_CDC_RegisterInterface(&bsp::UsbFsPcd::UsbdHandle(), &USBD_Interface_fops_FS) != USBD_OK)
+	if (USBD_CDC_RegisterInterface(&bsp::UsbCdcSerialPort::UsbdHandle(), &USBD_Interface_fops_FS) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
-	if (USBD_Start(&bsp::UsbFsPcd::UsbdHandle()) != USBD_OK)
+	if (USBD_Start(&bsp::UsbCdcSerialPort::UsbdHandle()) != USBD_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
