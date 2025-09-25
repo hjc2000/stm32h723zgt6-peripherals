@@ -96,24 +96,6 @@ void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 }
 
 /**
- * @brief  Resume callback.
- * When Low power mode is enabled the debug cannot be used (IAR, Keil doesn't support it)
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_ResumeCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_ResumeCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	/* USER CODE BEGIN 3 */
-
-	/* USER CODE END 3 */
-	USBD_LL_Resume((USBD_HandleTypeDef *)hpcd->pData);
-}
-
-/**
  * @brief  ISOOUTIncomplete callback.
  * @param  hpcd: PCD handle
  * @param  epnum: Endpoint number
@@ -212,9 +194,13 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 								pcd->Suspend();
 							});
 
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
-							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID,
-							 PCD_ResumeCallback);
+	pcd->SetResumeCallback([]()
+						   {
+							   std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
+							   pcd->Resume();
+
+							   USBD_LL_Resume(&bsp::UsbCdcSerialPort::UsbdHandle());
+						   });
 
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
 							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_CONNECT_CB_ID,

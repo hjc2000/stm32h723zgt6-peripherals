@@ -36,6 +36,8 @@ namespace bsp
 
 		void InitializeCallback();
 
+		/* #region USB 回调 */
+
 		std::function<void()> _sof_callback;
 		std::function<void(base::usb::fs_pcd::SetupStageCallbackArgs const &)> _setup_stage_callback;
 		std::function<void()> _reset_callback;
@@ -43,8 +45,6 @@ namespace bsp
 		std::function<void()> _resume_callback;
 		std::function<void()> _connect_callback;
 		std::function<void()> _disconnect_callback;
-
-		/* #region USB 回调 */
 
 		void OnSofCallback()
 		{
@@ -156,6 +156,10 @@ namespace bsp
 				/* Set SLEEPDEEP bit and SleepOnExit of Cortex System Control Register. */
 				SCB->SCR |= (uint32_t)((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
 			}
+		}
+
+		virtual void Resume() override
+		{
 		}
 
 		static PCD_HandleTypeDef &HalPcdHandle()

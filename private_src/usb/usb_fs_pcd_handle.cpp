@@ -23,6 +23,11 @@ void base::usb::fs_pcd::suspend(base::usb::fs_pcd::usb_fs_pcd_handle &self)
 	self.Suspend();
 }
 
+void base::usb::fs_pcd::resume(base::usb::fs_pcd::usb_fs_pcd_handle &self)
+{
+	self.Resume();
+}
+
 /* #region 注册回调 */
 
 void base::usb::fs_pcd::set_sof_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
@@ -47,6 +52,24 @@ void base::usb::fs_pcd::set_suspend_callback(base::usb::fs_pcd::usb_fs_pcd_handl
 											 std::function<void()> const &callback)
 {
 	self.SetSuspendCallback(callback);
+}
+
+void base::usb::fs_pcd::set_resume_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+											std::function<void()> const &callback)
+{
+	self.SetResumeCallback(callback);
+}
+
+void base::usb::fs_pcd::set_connect_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+											 std::function<void()> const &callback)
+{
+	self.SetConnectCallback(callback);
+}
+
+void base::usb::fs_pcd::set_disconnect_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+												std::function<void()> const &callback)
+{
+	self.SetDisconnectCallback(callback);
 }
 
 /* #endregion */
