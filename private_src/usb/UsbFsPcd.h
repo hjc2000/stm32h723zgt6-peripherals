@@ -127,6 +127,8 @@ namespace bsp
 			return hal_pcd_handle_context::_handle;
 		}
 
+		/* #region 注册回调 */
+
 		virtual void SetSofCallback(std::function<void()> const callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
@@ -175,6 +177,8 @@ namespace bsp
 			_disconnect_callback = callback;
 			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
+
+		/* #endregion */
 	};
 
 } // namespace bsp
