@@ -20,18 +20,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "base/embedded/usb/UsbFsPcd.h"
-#include "base/string/define.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_pcd.h"
 #include "UsbCdcSerialPort.h"
 #include "usbd_cdc.h"
 #include "usbd_core.h"
 #include "usbd_def.h"
+#include "UsbFsPcd.h"
 #include <cstdint>
 #include <memory>
-#include <stdexcept>
-
-#include "UsbFsPcd.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -229,25 +226,37 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 
 	pcd->SetResetCallback([]()
 						  {
-							  /* Set Speed. */
 							  USBD_LL_SetSpeed(&bsp::UsbCdcSerialPort::UsbdHandle(), USBD_SPEED_FULL);
-
-							  /* Reset Device. */
 							  USBD_LL_Reset(&bsp::UsbCdcSerialPort::UsbdHandle());
 						  });
 
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-	/* Register USB PCD CallBacks */
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID, PCD_ResumeCallback);
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_CONNECT_CB_ID, PCD_ConnectCallback);
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_DISCONNECT_CB_ID, PCD_DisconnectCallback);
+	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID,
+							 PCD_SuspendCallback);
 
-	HAL_PCD_RegisterDataOutStageCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_DataOutStageCallback);
-	HAL_PCD_RegisterDataInStageCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_DataInStageCallback);
-	HAL_PCD_RegisterIsoOutIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOOUTIncompleteCallback);
-	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOINIncompleteCallback);
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
+	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID,
+							 PCD_ResumeCallback);
+
+	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_CONNECT_CB_ID,
+							 PCD_ConnectCallback);
+
+	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_DISCONNECT_CB_ID,
+							 PCD_DisconnectCallback);
+
+	HAL_PCD_RegisterDataOutStageCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+										 PCD_DataOutStageCallback);
+
+	HAL_PCD_RegisterDataInStageCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+										PCD_DataInStageCallback);
+
+	HAL_PCD_RegisterIsoOutIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+										 PCD_ISOOUTIncompleteCallback);
+
+	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(),
+										PCD_ISOINIncompleteCallback);
 
 	return USBD_OK;
 }
