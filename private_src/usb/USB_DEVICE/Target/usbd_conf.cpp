@@ -125,20 +125,6 @@ void HAL_PCD_ISOINIncompleteCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 	USBD_LL_IsoINIncomplete((USBD_HandleTypeDef *)hpcd->pData, epnum);
 }
 
-/**
- * @brief  Disconnect callback.
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	USBD_LL_DevDisconnected((USBD_HandleTypeDef *)hpcd->pData);
-}
-
 /*******************************************************************************
 					   LL Driver Interface (USB Device Library --> PCD)
 *******************************************************************************/
@@ -193,9 +179,10 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 								USBD_LL_DevConnected(&bsp::UsbCdcSerialPort::UsbdHandle());
 							});
 
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(),
-							 HAL_PCD_CallbackIDTypeDef::HAL_PCD_DISCONNECT_CB_ID,
-							 PCD_DisconnectCallback);
+	pcd->SetDisconnectCallback([]()
+							   {
+								   USBD_LL_DevDisconnected(&bsp::UsbCdcSerialPort::UsbdHandle());
+							   });
 
 	HAL_PCD_RegisterDataOutStageCallback(&bsp::UsbFsPcd::HalPcdHandle(),
 										 PCD_DataOutStageCallback);
