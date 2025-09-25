@@ -78,7 +78,7 @@ static void PCD_SetupStageCallback(PCD_HandleTypeDef *hpcd)
 void HAL_PCD_SetupStageCallback(PCD_HandleTypeDef *hpcd)
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 {
-	USBD_LL_SetupStage((USBD_HandleTypeDef *)hpcd->pData, (uint8_t *)hpcd->Setup);
+	USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), (uint8_t *)(bsp::UsbFsPcd::HalPcdHandle().Setup));
 }
 
 /**
