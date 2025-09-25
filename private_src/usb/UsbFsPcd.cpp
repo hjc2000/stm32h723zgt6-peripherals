@@ -104,6 +104,10 @@ void bsp::UsbFsPcd::InitializeAsDevice(std::string const &clock_source_name,
 	//
 	// HAL_PWREx_EnableUSBVoltageDetector 随便调用，没事，即使没有使能 VBUS 检测功能。因为 cubemx
 	// 生成的代码也是不管有没有使能 VBUS 检测功能，始终调用 HAL_PWREx_EnableUSBVoltageDetector.
+	//
+	// stm32h743iit6 USB FS 启用 VBUS 或 BCD 前后的区别:
+	// https://blog.csdn.net/qq_36148047/article/details/152078209?sharetype=blogdetail&sharerId=152078209&sharerefer=PC&sharesource=qq_36148047&spm=1011.2480.3001.8118
+	//
 	_hal_pcd_handle_context._handle.Init.battery_charging_enable = FunctionalState::DISABLE;
 	_hal_pcd_handle_context._handle.Init.vbus_sensing_enable = FunctionalState::DISABLE;
 
