@@ -90,7 +90,9 @@ void bsp::UsbFsPcd::InitializeAsDevice(std::string const &clock_source_name,
 	_hal_pcd_handle_context._handle.Init.battery_charging_enable = FunctionalState::DISABLE;
 	_hal_pcd_handle_context._handle.Init.vbus_sensing_enable = FunctionalState::DISABLE;
 	_hal_pcd_handle_context._handle.Init.use_dedicated_ep1 = FunctionalState::DISABLE;
-	if (HAL_PCD_Init(&_hal_pcd_handle_context._handle) != HAL_StatusTypeDef::HAL_OK)
+
+	HAL_StatusTypeDef result = HAL_PCD_Init(&_hal_pcd_handle_context._handle);
+	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
