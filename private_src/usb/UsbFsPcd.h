@@ -24,7 +24,7 @@ namespace bsp
 		};
 
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
-		hal_pcd_handle_context _handle_context{this};
+		hal_pcd_handle_context _hal_pcd_handle_context{this};
 
 		void InitializeCallback();
 
