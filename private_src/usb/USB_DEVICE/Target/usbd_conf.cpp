@@ -249,7 +249,6 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOINIncompleteCallback);
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 
-	pcd->Start();
 	return USBD_OK;
 }
 
@@ -262,6 +261,9 @@ USBD_StatusTypeDef USBD_LL_Start(USBD_HandleTypeDef *pdev)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
 	USBD_StatusTypeDef usb_status = USBD_OK;
+
+	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
+	pcd->Start();
 
 	hal_status = HAL_PCD_Start(reinterpret_cast<PCD_HandleTypeDef *>(pdev->pData));
 
