@@ -10,7 +10,13 @@ public:
 
 	virtual void Suspend() = 0;
 
+	/* #region 设置回调函数 */
+
 	virtual void SetSofCallback(std::function<void()> const &callback) = 0;
 
 	virtual void SetSetupStageCallback(std::function<void(base::usb::fs_pcd::SetupStageCallbackArgs const &)> const &callback) = 0;
+
+	virtual void SetResetCallback(std::function<void()> const &callback) = 0;
+
+	/* #endregion */
 };

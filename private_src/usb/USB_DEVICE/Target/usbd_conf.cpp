@@ -109,23 +109,8 @@ static void PCD_ResetCallback(PCD_HandleTypeDef *hpcd)
 void HAL_PCD_ResetCallback(PCD_HandleTypeDef *hpcd)
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 {
-	USBD_SpeedTypeDef speed = USBD_SPEED_FULL;
-
-	if (hpcd->Init.speed == PCD_SPEED_HIGH)
-	{
-		speed = USBD_SPEED_HIGH;
-	}
-	else if (hpcd->Init.speed == PCD_SPEED_FULL)
-	{
-		speed = USBD_SPEED_FULL;
-	}
-	else
-	{
-		throw std::runtime_error{CODE_POS_STR + "复位失败。"};
-	}
-
 	/* Set Speed. */
-	USBD_LL_SetSpeed((USBD_HandleTypeDef *)hpcd->pData, speed);
+	USBD_LL_SetSpeed((USBD_HandleTypeDef *)hpcd->pData, USBD_SPEED_FULL);
 
 	/* Reset Device. */
 	USBD_LL_Reset((USBD_HandleTypeDef *)hpcd->pData);

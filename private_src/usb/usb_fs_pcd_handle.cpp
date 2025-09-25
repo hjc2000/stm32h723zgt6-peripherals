@@ -37,4 +37,10 @@ void base::usb::fs_pcd::set_setup_stage_callback(base::usb::fs_pcd::usb_fs_pcd_h
 	self.SetSetupStageCallback(callback);
 }
 
+void base::usb::fs_pcd::set_reset_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+										   std::function<void()> const &callback)
+{
+	self.SetResetCallback(callback);
+}
+
 /* #endregion */
