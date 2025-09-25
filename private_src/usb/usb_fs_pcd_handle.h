@@ -8,5 +8,5 @@ public:
 
 	virtual void SetSofCallback(std::function<void()> const &callback) = 0;
 
-	virtual void SetSetupStageCallback(std::function<void()> const &callback) = 0;
+	virtual void SetSetupStageCallback(std::function<void(base::usb::fs_pcd::SetupStageCallbackArgs const &)> const &callback) = 0;
 };

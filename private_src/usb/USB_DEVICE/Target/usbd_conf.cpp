@@ -252,7 +252,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 							USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
 						});
 
-	pcd->SetSetupStageCallback([]()
+	pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
 							   {
 								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), (uint8_t *)(bsp::UsbFsPcd::HalPcdHandle().Setup));
 							   });
