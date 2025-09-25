@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <functional>
 
+/* #region 中断服务函数 */
+
 std::function<void()> _usb_isr;
 
 extern "C"
@@ -16,6 +18,8 @@ extern "C"
 		}
 	}
 }
+
+/* #endregion */
 
 void bsp::UsbFsPcd::InitializeInterrupt()
 {
