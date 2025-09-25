@@ -101,6 +101,9 @@ void bsp::UsbFsPcd::InitializeAsDevice(std::string const &clock_source_name,
 	//
 	// 注意，PA9 作为 VBUS 功能配置的是普通的输入模式，无上下拉。USB 外设直接读取输入寄存器的值。
 	// PA9 不需要配置为 VBUS 复用功能，实际上也没有 VBUS 复用功能。VBUS 检测不是通过复用来实现的。
+	//
+	// HAL_PWREx_EnableUSBVoltageDetector 随便调用，没事，即使没有使能 VBUS 检测功能。因为 cubemx
+	// 生成的代码也是不管有没有使能 VBUS 检测功能，始终调用 HAL_PWREx_EnableUSBVoltageDetector.
 	_hal_pcd_handle_context._handle.Init.battery_charging_enable = FunctionalState::DISABLE;
 	_hal_pcd_handle_context._handle.Init.vbus_sensing_enable = FunctionalState::DISABLE;
 
