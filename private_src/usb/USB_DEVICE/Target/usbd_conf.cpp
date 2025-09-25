@@ -248,19 +248,17 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	bsp::UsbFsPcd::HalPcdHandle().pData = pdev;
 	pdev->pData = &bsp::UsbFsPcd::HalPcdHandle();
 
-	{
-		std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
+	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
 
-		pcd->SetSofCallback([]()
-							{
-								USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
-							});
+	pcd->SetSofCallback([]()
+						{
+							USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
+						});
 
-		pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
-								   {
-									   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
-								   });
-	}
+	pcd->SetSetupStageCallback([](base::usb::fs_pcd::SetupStageCallbackArgs const &args)
+							   {
+								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), const_cast<uint8_t *>(args.Span().Buffer()));
+							   });
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
@@ -276,8 +274,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOINIncompleteCallback);
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 
-	base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
-
+	pcd->Start();
 	return USBD_OK;
 }
 
