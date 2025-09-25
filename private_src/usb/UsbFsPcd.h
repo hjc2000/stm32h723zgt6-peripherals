@@ -86,7 +86,7 @@ namespace bsp
 										uint32_t divider,
 										base::usb::PhyType phy_type) override;
 
-		static PCD_HandleTypeDef &Handle()
+		static PCD_HandleTypeDef &HalPcdHandle()
 		{
 			return hal_pcd_handle_context::_handle;
 		}
