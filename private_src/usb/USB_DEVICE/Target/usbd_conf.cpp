@@ -300,9 +300,6 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
 	/* Link the driver to the stack. */
-	bsp::UsbFsPcd::HalPcdHandle().pData = pdev;
-	pdev->pData = &bsp::UsbFsPcd::HalPcdHandle();
-
 	bsp::UsbFsPcd::HalPcdHandle().Instance = USB_OTG_HS;
 	bsp::UsbFsPcd::HalPcdHandle().Init.dev_endpoints = 9;
 	bsp::UsbFsPcd::HalPcdHandle().Init.speed = PCD_SPEED_FULL;
