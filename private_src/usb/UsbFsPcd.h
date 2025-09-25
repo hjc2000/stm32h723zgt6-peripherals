@@ -2,15 +2,17 @@
 #include "base/embedded/interrupt/interrupt.h"
 #include "base/embedded/usb/usb_fs_pcd_handle.h"
 #include "base/stream/ReadOnlySpan.h"
+#include "base/string/define.h"
 #include "base/UsageStateManager.h"
 #include "hal.h" // IWYU pragma: keep
 #include "usb_fs_pcd_handle.h"
 #include <cstdint>
 #include <functional>
+#include <stdexcept>
 
 namespace bsp
 {
-	class UsbFsPcd :
+	class UsbFsPcd final :
 		public base::usb::fs_pcd::usb_fs_pcd_handle
 	{
 	private:
@@ -136,7 +138,12 @@ namespace bsp
 
 		virtual void Start() override
 		{
-			HAL_PCD_Start(&_handle_context._handle);
+			HAL_StatusTypeDef result = HAL_PCD_Start(&_handle_context._handle);
+			if (result != HAL_StatusTypeDef::HAL_OK)
+			{
+				throw std::runtime_error{CODE_POS_STR + "启动失败。"};
+			}
+
 			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
