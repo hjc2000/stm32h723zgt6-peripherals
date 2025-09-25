@@ -11,20 +11,20 @@ namespace bsp
 		public base::usb::fs_pcd::usb_fs_pcd_handle
 	{
 	private:
-		class handle_context
+		class hal_pcd_handle_context
 		{
 		public:
-			handle_context(UsbFsPcd *self)
+			hal_pcd_handle_context(UsbFsPcd *self)
 				: _self{self}
 			{
 			}
 
-			PCD_HandleTypeDef _handle{};
+			inline static PCD_HandleTypeDef _handle{};
 			UsbFsPcd *_self{};
 		};
 
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
-		handle_context _handle_context{this};
+		hal_pcd_handle_context _handle_context{this};
 
 		void InitializeCallback();
 
@@ -85,6 +85,11 @@ namespace bsp
 		virtual void InitializeAsDevice(std::string const &clock_source_name,
 										uint32_t divider,
 										base::usb::PhyType phy_type) override;
+
+		static PCD_HandleTypeDef &Handle()
+		{
+			return hal_pcd_handle_context::_handle;
+		}
 	};
 
 } // namespace bsp
