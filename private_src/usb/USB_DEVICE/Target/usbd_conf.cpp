@@ -23,6 +23,7 @@
 #include "base/string/define.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_pcd.h"
+#include "UsbCdcSerialPort.h"
 #include "usbd_cdc.h"
 #include "usbd_core.h"
 #include "usbd_def.h"
@@ -108,20 +109,6 @@ void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 {
 	USBD_LL_DataInStage((USBD_HandleTypeDef *)hpcd->pData, epnum, hpcd->IN_ep[epnum].xfer_buff);
-}
-
-/**
- * @brief  SOF callback.
- * @param  hpcd: PCD handle
- * @retval None
- */
-#if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
-static void PCD_SOFCallback(PCD_HandleTypeDef *hpcd)
-#else
-void HAL_PCD_SOFCallback(PCD_HandleTypeDef *hpcd)
-#endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
-{
-	USBD_LL_SOF((USBD_HandleTypeDef *)hpcd->pData);
 }
 
 /**
@@ -274,9 +261,13 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 
 	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
 
+	pcd->SetSofCallback([]()
+						{
+							USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
+						});
+
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
-	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SOF_CB_ID, PCD_SOFCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SETUPSTAGE_CB_ID, PCD_SetupStageCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESET_CB_ID, PCD_ResetCallback);
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
@@ -289,6 +280,8 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	HAL_PCD_RegisterIsoOutIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOOUTIncompleteCallback);
 	HAL_PCD_RegisterIsoInIncpltCallback(&bsp::UsbFsPcd::HalPcdHandle(), PCD_ISOINIncompleteCallback);
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
+
+	base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 
 	return USBD_OK;
 }

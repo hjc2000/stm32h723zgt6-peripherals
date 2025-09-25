@@ -129,53 +129,46 @@ namespace bsp
 
 		/* #region 注册回调 */
 
-		virtual void SetSofCallback(std::function<void()> const callback) override
+		virtual void SetSofCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_sof_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		virtual void SetSetupStageCallback(std::function<void()> const callback) override
+		virtual void SetSetupStageCallback(std::function<void()> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_setup_stage_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetResetCallback(std::function<void()> const callback)
+		void SetResetCallback(std::function<void()> const &callback)
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_reset_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetSuspendCallback(std::function<void()> const callback)
+		void SetSuspendCallback(std::function<void()> const &callback)
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_suspend_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetResumeCallback(std::function<void()> const callback)
+		void SetResumeCallback(std::function<void()> const &callback)
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_resume_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetConnectCallback(std::function<void()> const callback)
+		void SetConnectCallback(std::function<void()> const &callback)
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_connect_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetDisconnectCallback(std::function<void()> const callback)
+		void SetDisconnectCallback(std::function<void()> const &callback)
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_disconnect_callback = callback;
-			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
 		/* #endregion */
