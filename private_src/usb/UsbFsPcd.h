@@ -28,6 +28,8 @@ namespace bsp
 		base::UsageStateManager<UsbFsPcd> _usage_state_manager{};
 		hal_pcd_handle_context _hal_pcd_handle_context{this};
 
+		void InitializeInterrupt();
+
 		void InitializeCallback();
 
 		std::function<void()> _sof_callback;

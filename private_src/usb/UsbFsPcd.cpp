@@ -2,6 +2,30 @@
 #include "base/embedded/interrupt/interrupt.h"
 #include "Legacy/stm32_hal_legacy.h"
 #include <cstdint>
+#include <functional>
+
+std::function<void()> _usb_isr;
+
+extern "C"
+{
+	void OTG_HS_IRQHandler(void)
+	{
+		if (_usb_isr)
+		{
+			_usb_isr();
+		}
+	}
+}
+
+void bsp::UsbFsPcd::InitializeInterrupt()
+{
+	base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
+
+	_usb_isr = [this]()
+	{
+		HAL_PCD_IRQHandler(&_hal_pcd_handle_context._handle);
+	};
+}
 
 void bsp::UsbFsPcd::InitializeCallback()
 {
@@ -118,8 +142,8 @@ void bsp::UsbFsPcd::InitializeAsDevice(base::usb::PhyType phy_type)
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
+	InitializeInterrupt();
 	InitializeCallback();
-	base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 
 	HAL_PCDEx_SetRxFiFo(&_hal_pcd_handle_context._handle, 0x80);
 	HAL_PCDEx_SetTxFiFo(&_hal_pcd_handle_context._handle, 0, 0x40);
