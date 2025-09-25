@@ -156,4 +156,5 @@ namespace bsp
 
 		virtual void Close() override;
 	};
+
 } // namespace bsp

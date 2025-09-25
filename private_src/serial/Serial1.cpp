@@ -23,35 +23,17 @@ extern "C"
 {
 	void USART1_IRQHandler()
 	{
-		try
-		{
-			_uart1_isr();
-		}
-		catch (...)
-		{
-		}
+		_uart1_isr();
 	}
 
 	void DMA1_Stream0_IRQHandler()
 	{
-		try
-		{
-			_dma1_stream0_isr();
-		}
-		catch (...)
-		{
-		}
+		_dma1_stream0_isr();
 	}
 
 	void DMA1_Stream1_IRQHandler()
 	{
-		try
-		{
-			_dma1_stream1_isr();
-		}
-		catch (...)
-		{
-		}
+		_dma1_stream1_isr();
 	}
 }
 
