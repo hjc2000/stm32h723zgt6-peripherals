@@ -13,6 +13,16 @@ void base::usb::fs_pcd::initialize_as_device(base::usb::fs_pcd::usb_fs_pcd_handl
 	self.InitializeAsDevice(phy_type);
 }
 
+void base::usb::fs_pcd::start(base::usb::fs_pcd::usb_fs_pcd_handle &self)
+{
+	self.Start();
+}
+
+void base::usb::fs_pcd::suspend(base::usb::fs_pcd::usb_fs_pcd_handle &self)
+{
+	self.Suspend();
+}
+
 /* #region 注册回调 */
 
 void base::usb::fs_pcd::set_sof_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,

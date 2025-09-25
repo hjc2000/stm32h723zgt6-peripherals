@@ -134,6 +134,22 @@ namespace bsp
 
 		virtual void InitializeAsDevice(base::usb::PhyType phy_type) override;
 
+		virtual void Start() override
+		{
+			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
+		}
+
+		virtual void Suspend() override
+		{
+			__HAL_PCD_GATE_PHYCLOCK(&_hal_pcd_handle_context._handle);
+
+			if (_hal_pcd_handle_context._handle.Init.low_power_enable)
+			{
+				/* Set SLEEPDEEP bit and SleepOnExit of Cortex System Control Register. */
+				SCB->SCR |= (uint32_t)((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+			}
+		}
+
 		static PCD_HandleTypeDef &HalPcdHandle()
 		{
 			return *_handle;
