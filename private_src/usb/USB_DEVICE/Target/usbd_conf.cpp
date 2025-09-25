@@ -270,6 +270,9 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
  */
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
+	bsp::UsbFsPcd::HalPcdHandle().pData = pdev;
+	pdev->pData = &bsp::UsbFsPcd::HalPcdHandle();
+
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SOF_CB_ID, PCD_SOFCallback);

@@ -124,9 +124,4 @@ void bsp::UsbFsPcd::InitializeAsDevice(base::usb::PhyType phy_type)
 	HAL_PCDEx_SetRxFiFo(&_hal_pcd_handle_context._handle, 0x80);
 	HAL_PCDEx_SetTxFiFo(&_hal_pcd_handle_context._handle, 0, 0x40);
 	HAL_PCDEx_SetTxFiFo(&_hal_pcd_handle_context._handle, 1, 0x80);
-
-	{
-		_hal_pcd_handle_context._handle.pData = &_usbd_handle_context._handle;
-		_usbd_handle_context._handle.pData = &_hal_pcd_handle_context._handle;
-	}
 }
