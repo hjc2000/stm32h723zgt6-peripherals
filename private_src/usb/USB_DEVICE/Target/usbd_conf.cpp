@@ -266,6 +266,11 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 							USBD_LL_SOF(&bsp::UsbCdcSerialPort::UsbdHandle());
 						});
 
+	pcd->SetSetupStageCallback([]()
+							   {
+								   USBD_LL_SetupStage(&bsp::UsbCdcSerialPort::UsbdHandle(), (uint8_t *)(bsp::UsbFsPcd::HalPcdHandle().Setup));
+							   });
+
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
 	HAL_PCD_RegisterCallback(&bsp::UsbFsPcd::HalPcdHandle(), HAL_PCD_CallbackIDTypeDef::HAL_PCD_SETUPSTAGE_CB_ID, PCD_SetupStageCallback);
