@@ -19,13 +19,14 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "base/embedded/usb/UsbFsPcd.h"
 #include "base/string/define.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_pcd.h"
 #include "usbd_cdc.h"
 #include "usbd_core.h"
 #include "usbd_def.h"
-
+#include <memory>
 #include <stdexcept>
 
 #include "UsbFsPcd.h"
@@ -270,6 +271,8 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 {
 	bsp::UsbFsPcd::HalPcdHandle().pData = pdev;
 	pdev->pData = &bsp::UsbFsPcd::HalPcdHandle();
+
+	std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd = base::usb::fs_pcd::usb_fs_pcd_slot()[0];
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */

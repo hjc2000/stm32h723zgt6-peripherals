@@ -5,4 +5,8 @@ class base::usb::fs_pcd::usb_fs_pcd_handle
 {
 public:
 	virtual void InitializeAsDevice(base::usb::PhyType phy_type) = 0;
+
+	virtual void SetSofCallback(std::function<void()> const callback) = 0;
+
+	virtual void SetSetupStageCallback(std::function<void()> const callback) = 0;
 };

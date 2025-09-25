@@ -12,3 +12,19 @@ void base::usb::fs_pcd::initialize_as_device(base::usb::fs_pcd::usb_fs_pcd_handl
 {
 	self.InitializeAsDevice(phy_type);
 }
+
+/* #region 注册回调 */
+
+void base::usb::fs_pcd::set_sof_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+										 std::function<void()> const &callback)
+{
+	self.SetSofCallback(callback);
+}
+
+void base::usb::fs_pcd::set_setup_stage_callback(base::usb::fs_pcd::usb_fs_pcd_handle &self,
+												 std::function<void()> const &callback)
+{
+	self.SetSetupStageCallback(callback);
+}
+
+/* #endregion */

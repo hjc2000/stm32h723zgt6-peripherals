@@ -127,14 +127,14 @@ namespace bsp
 			return hal_pcd_handle_context::_handle;
 		}
 
-		void SetSofCallback(std::function<void()> const callback)
+		virtual void SetSofCallback(std::function<void()> const callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_sof_callback = callback;
 			base::interrupt::enable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn), 5);
 		}
 
-		void SetSetupStageCallback(std::function<void()> const callback)
+		virtual void SetSetupStageCallback(std::function<void()> const callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_setup_stage_callback = callback;
