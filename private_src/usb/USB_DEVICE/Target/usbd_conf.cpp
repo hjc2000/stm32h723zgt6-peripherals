@@ -67,35 +67,6 @@ USBD_StatusTypeDef USBD_Get_USB_Status(HAL_StatusTypeDef hal_status);
 *******************************************************************************/
 /* MSP Init */
 
-void HAL_PCD_MspInit(PCD_HandleTypeDef *pcdHandle)
-{
-}
-
-void HAL_PCD_MspDeInit(PCD_HandleTypeDef *pcdHandle)
-{
-	if (pcdHandle->Instance == USB_OTG_HS)
-	{
-		/* USER CODE BEGIN USB_OTG_FS_MspDeInit 0 */
-
-		/* USER CODE END USB_OTG_FS_MspDeInit 0 */
-		/* Peripheral clock disable */
-		__HAL_RCC_USB_OTG_HS_CLK_DISABLE();
-
-		/**USB_OTG_FS GPIO Configuration
-		PA11     ------> USB_OTG_FS_DM
-		PA12     ------> USB_OTG_FS_DP
-		*/
-		HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11 | GPIO_PIN_12);
-
-		/* Peripheral interrupt Deinit*/
-		HAL_NVIC_DisableIRQ(OTG_HS_IRQn);
-
-		/* USER CODE BEGIN USB_OTG_FS_MspDeInit 1 */
-
-		/* USER CODE END USB_OTG_FS_MspDeInit 1 */
-	}
-}
-
 /**
  * @brief  Setup stage callback
  * @param  hpcd: PCD handle
