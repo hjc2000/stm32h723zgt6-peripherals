@@ -1,6 +1,6 @@
 #pragma once
 #include "base/embedded/interrupt/interrupt.h"
-#include "base/embedded/usb/usb_fs_pcd_handle.h"
+#include "base/embedded/usb/fs-device-pcd/usb_fs_pcd_handle.h"
 #include "base/stream/ReadOnlySpan.h"
 #include "base/string/define.h"
 #include "base/UsageStateManager.h"
@@ -13,7 +13,7 @@
 namespace bsp
 {
 	class UsbFsPcd final :
-		public base::usb::fs_pcd::usb_fs_pcd_handle
+		public base::usb::fs_device_pcd::usb_fs_pcd_handle
 	{
 	private:
 		class hal_pcd_handle_context
@@ -39,7 +39,7 @@ namespace bsp
 		/* #region USB 回调 */
 
 		std::function<void()> _sof_callback;
-		std::function<void(base::usb::fs_pcd::SetupStageCallbackArgs const &)> _setup_stage_callback;
+		std::function<void(base::usb::fs_device_pcd::SetupStageCallbackArgs const &)> _setup_stage_callback;
 		std::function<void()> _reset_callback;
 		std::function<void()> _suspend_callback;
 		std::function<void()> _resume_callback;
@@ -63,7 +63,7 @@ namespace bsp
 					sizeof(_handle_context._handle.Setup),
 				};
 
-				base::usb::fs_pcd::SetupStageCallbackArgs args{span};
+				base::usb::fs_device_pcd::SetupStageCallbackArgs args{span};
 
 				_setup_stage_callback(args);
 			}
@@ -130,7 +130,7 @@ namespace bsp
 	public:
 		UsbFsPcd()
 		{
-			base::usb::fs_pcd::msp_initialize(1);
+			base::usb::fs_device_pcd::msp_initialize(1);
 			_handle = &_handle_context._handle;
 		}
 
@@ -175,7 +175,7 @@ namespace bsp
 			_sof_callback = callback;
 		}
 
-		virtual void SetSetupStageCallback(std::function<void(base::usb::fs_pcd::SetupStageCallbackArgs const &)> const &callback) override
+		virtual void SetSetupStageCallback(std::function<void(base::usb::fs_device_pcd::SetupStageCallbackArgs const &)> const &callback) override
 		{
 			base::interrupt::disable_interrupt(static_cast<int32_t>(IRQn_Type::OTG_HS_IRQn));
 			_setup_stage_callback = callback;
