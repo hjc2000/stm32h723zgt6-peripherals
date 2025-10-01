@@ -1,8 +1,8 @@
 #pragma once
-#include "base/embedded/usb/fs-device-pcd/usb_fs_pcd_handle.h"
+#include "base/embedded/usb/fs-device-pcd/usb_fs_device_pcd_handle.h"
 #include "base/UsageStateManager.h"
 #include "hal.h" // IWYU pragma: keep
-#include "usb_fs_pcd_handle.h"
+#include "usb_fs_device_pcd_handle.h"
 #include "usbd_def.h"
 #include <cstdint>
 

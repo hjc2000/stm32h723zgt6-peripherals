@@ -1,7 +1,7 @@
 #pragma once
-#include "base/embedded/usb/fs-device-pcd/usb_fs_pcd_handle.h"
+#include "base/embedded/usb/fs-device-pcd/usb_fs_device_pcd_handle.h"
 
-class base::usb::fs_device_pcd::usb_fs_pcd_handle
+class base::usb::fs_device_pcd::usb_fs_device_pcd_handle
 {
 public:
 	virtual void InitializeAsDevice(base::usb::PhyType phy_type) = 0;
