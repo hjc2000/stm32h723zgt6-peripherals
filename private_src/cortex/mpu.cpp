@@ -2,12 +2,16 @@
 #include "base/embedded/cortex/MemoryType.h"
 #include "base/string/define.h"
 #include "hal.h"
+#include <bitset>
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 
 namespace
 {
+	std::bitset<16> _mpu_region_bit_set{};
+
 	constexpr uint32_t region_number_to_define(uint32_t value)
 	{
 		switch (value)
@@ -249,6 +253,20 @@ namespace
 		}
 	}
 
+	class MpuGuard
+	{
+	public:
+		MpuGuard()
+		{
+			HAL_MPU_Disable();
+		}
+
+		~MpuGuard()
+		{
+			HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+		}
+	};
+
 } // namespace
 
 void base::cortex::mpu::configure(uint32_t region_number,
@@ -256,8 +274,14 @@ void base::cortex::mpu::configure(uint32_t region_number,
 								  size_t size,
 								  base::cortex::MemoryType memory_type)
 {
-	HAL_MPU_Disable();
+	if (_mpu_region_bit_set[region_number])
+	{
+		std::string message = CODE_POS_STR;
+		message += "区域 " + std::to_string(region_number) + " 已配置。";
+		throw std::runtime_error{message};
+	}
 
+	MpuGuard g{};
 	MPU_Region_InitTypeDef mpu_region_init_handle{};
 	mpu_region_init_handle.Enable = MPU_REGION_ENABLE;
 	mpu_region_init_handle.Number = region_number_to_define(region_number);
@@ -268,6 +292,4 @@ void base::cortex::mpu::configure(uint32_t region_number,
 	mpu_region_init_handle.AccessPermission = MPU_REGION_FULL_ACCESS;
 	configure_memory_type(mpu_region_init_handle, memory_type);
 	HAL_MPU_ConfigRegion(&mpu_region_init_handle);
-
-	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
