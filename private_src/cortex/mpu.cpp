@@ -1,4 +1,5 @@
 #include "base/embedded/cortex/mpu.h"
+#include "base/embedded/cortex/MemoryType.h"
 #include "base/string/define.h"
 #include "hal.h"
 #include <cstddef>
@@ -197,6 +198,57 @@ namespace
 		}
 	}
 
+	void configure_memory_type(MPU_Region_InitTypeDef configuration, base::cortex::MemoryType value)
+	{
+		switch (value)
+		{
+		case base::cortex::MemoryType::Device:
+			{
+				configuration.TypeExtField = MPU_TEX_LEVEL0;
+				configuration.IsShareable = MPU_ACCESS_SHAREABLE;
+				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				break;
+			}
+		case base::cortex::MemoryType::DeviceWithWritingBuffer:
+			{
+				configuration.TypeExtField = MPU_TEX_LEVEL0;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+				configuration.IsBufferable = MPU_ACCESS_BUFFERABLE;
+				break;
+			}
+		case base::cortex::MemoryType::Normal:
+			{
+				configuration.TypeExtField = MPU_TEX_LEVEL1;
+				configuration.IsShareable = MPU_ACCESS_SHAREABLE;
+				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				break;
+			}
+		case base::cortex::MemoryType::NormalWithCache_WriteThrough:
+			{
+				configuration.TypeExtField = MPU_TEX_LEVEL1;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+				configuration.IsCacheable = MPU_ACCESS_CACHEABLE;
+				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				break;
+			}
+		case base::cortex::MemoryType::NormalWithCache_WriteBack:
+			{
+				configuration.TypeExtField = MPU_TEX_LEVEL1;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+				configuration.IsCacheable = MPU_ACCESS_CACHEABLE;
+				configuration.IsBufferable = MPU_ACCESS_BUFFERABLE;
+				break;
+			}
+		default:
+			{
+				throw std::invalid_argument{CODE_POS_STR + "非法内存类型。"};
+			}
+		}
+	}
+
 } // namespace
 
 void base::cortex::mpu::configure(uint32_t region_number,
@@ -214,10 +266,7 @@ void base::cortex::mpu::configure(uint32_t region_number,
 	mpu_region_init_handle.Size = size_to_define(size);
 	mpu_region_init_handle.SubRegionDisable = 0x00;
 	mpu_region_init_handle.AccessPermission = MPU_REGION_FULL_ACCESS;
-	mpu_region_init_handle.TypeExtField = MPU_TEX_LEVEL0;
-	mpu_region_init_handle.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-	mpu_region_init_handle.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-	mpu_region_init_handle.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+	configure_memory_type(mpu_region_init_handle, memory_type);
 	HAL_MPU_ConfigRegion(&mpu_region_init_handle);
 
 	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
