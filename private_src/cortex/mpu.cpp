@@ -198,48 +198,48 @@ namespace
 		}
 	}
 
-	void configure_memory_type(MPU_Region_InitTypeDef configuration, base::cortex::MemoryType value)
+	void configure_memory_type(MPU_Region_InitTypeDef &configuration, base::cortex::MemoryType value)
 	{
 		switch (value)
 		{
 		case base::cortex::MemoryType::Device:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL0;
-				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				break;
 			}
 		case base::cortex::MemoryType::DeviceWithWritingBuffer:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL0;
-				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_BUFFERABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				break;
 			}
 		case base::cortex::MemoryType::Normal:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL1;
-				configuration.IsShareable = MPU_ACCESS_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				break;
 			}
 		case base::cortex::MemoryType::NormalWithCache_WriteThrough:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL1;
-				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				break;
 			}
 		case base::cortex::MemoryType::NormalWithCache_WriteBack:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL1;
-				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_BUFFERABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				break;
 			}
 		default:
