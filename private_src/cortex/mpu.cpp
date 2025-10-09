@@ -205,7 +205,7 @@ namespace
 		case base::cortex::MemoryType::Device:
 			{
 				configuration.TypeExtField = MPU_TEX_LEVEL0;
-				configuration.IsShareable = MPU_ACCESS_SHAREABLE;
+				configuration.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
 				configuration.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
 				configuration.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
 				break;
