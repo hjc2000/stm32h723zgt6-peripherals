@@ -2,6 +2,16 @@
 #include "base/embedded/interrupt/interrupt.h"
 #include "hal.h"
 
+void base::interrupt::DisableGlobalInterruptionImpelement::disable_global_interrupt() noexcept
+{
+	__disable_irq();
+}
+
+void base::interrupt::DisableGlobalInterruptionImpelement::enable_global_interrupt() noexcept
+{
+	__enable_irq();
+}
+
 void base::interrupt::disable_interrupt(int32_t irq) noexcept
 {
 	HAL_NVIC_DisableIRQ(static_cast<IRQn_Type>(irq));
@@ -20,14 +30,4 @@ void base::interrupt::enable_interrupt(int32_t irq, int32_t priority) noexcept
 	base::interrupt::disable_interrupt(irq);
 	HAL_NVIC_SetPriority(static_cast<IRQn_Type>(irq), priority, 0);
 	HAL_NVIC_EnableIRQ(static_cast<IRQn_Type>(irq));
-}
-
-void base::interrupt::disable_global_interrupt() noexcept
-{
-	__disable_irq();
-}
-
-void base::interrupt::enable_global_interrupt() noexcept
-{
-	__enable_irq();
 }
